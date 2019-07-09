@@ -11,16 +11,21 @@ board_cols=5
 board_pad_x=4.5
 board_pad_y=5
 
-function make_actor(tag,x,y,col,row,sprite)
+function make_actor(tag,x,y,x_offset,y_offset,col,row,sprite)
 	x=x or 0
 	y=y or 0
+	x_offset=x_offset or 0
 	col=col or 0
 	row=row or 0
+	y_offset=y_offset or 0
+	
 	a={}
 	a.col=col
 	a.row=row
 	a.x=x
 	a.y=y
+	a.x_offset=x_offset
+	a.y_offset=y_offset
 	a.spr=sprite
 	a.tag=tag
 	a.parent=nil
@@ -56,29 +61,39 @@ function _init()
  local a;
  for row=1,board_rows do
 	 for col=1,board_cols do
-		 a=make_actor("tile",(col+board_pad_x)*8,(row+board_pad_y)*8,col,row,18)	
+		 a=make_actor("tile",(col+board_pad_x)*8,(row+board_pad_y)*8,0,0,col,row,18)	
 	 	add(tiles,a)
 	 end
  end
- a=make_actor("player",8,8,1,1,1)
+ a=make_actor("player",8,8,0,-2,1,1,1)
  add(players,a)
  
  attach(a,tile_at(3,3))
 
-	a=make_actor("cake",8,8,1,1,3)
+	a=make_actor("cake",8,8,0,-2,1,1,3)
 	attach(a,tile_at(1,4))
 	add(tiles,a)
 	printh(">>>>>>>>>>>>>>>")
 	make_tween(a,"x",(5+board_pad_x)*8,0.02)
 	make_tween(a,"y",(1+board_pad_y)*8,0.02)
 
-	a=make_actor("arrow",8,8,1,1,19)
+	a=make_actor("arrow",8,8,0,0,1,1,19)
 	attach(a,tile_at(4,3))
  add(tiles,a)	
 end
 
+function on_arrow_stepped(arrow,stepper)
+		
+end
+
 function on_tween_reached()
 	printh("tween reached!")
+	local p=players[1]
+	for i=1,#p.parent.children,1 do
+	 if p.parent.children[i].tag=="arrow" then
+	 	on_arrow_stepped(p.parent.children[i],p)
+	 end
+	end
 end
 
 function control_player(player_num,dx,dy)
@@ -134,8 +149,8 @@ function _update()
 end
 
 function draw_actor(a)
-	local sx=(a.x)
-	local sy=(a.y)
+	local sx=a.x+a.x_offset
+	local sy=a.y+a.y_offset
 	spr(a.spr, sx, sy)
 end
 
