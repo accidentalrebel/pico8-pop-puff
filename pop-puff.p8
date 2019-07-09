@@ -3,6 +3,7 @@ version 18
 __lua__
 rectfill(0,0,127,127,5)
 
+-- globals
 tiles = {}
 players = {}
 tweens = {}
@@ -10,8 +11,18 @@ board_rows = 5
 board_cols = 5
 board_pad_x = 4.5
 board_pad_y = 5
+
+-- enums
 _x=1
 _y=2
+_pop=1
+_puff=2
+_cake=3
+_arrow=4
+_up=1
+_right=2
+_down=3
+_left=4
 
 function make_actor(tag,x,y,x_offset,y_offset,col,row,sprite)
    x = x or 0
@@ -32,6 +43,15 @@ function make_actor(tag,x,y,x_offset,y_offset,col,row,sprite)
    a.tag = tag
    a.parent = nil
    a.children = {}
+   return a
+end
+
+function make_arrow(pointing,col,row)
+   local a = make_actor(_arrow,0,0,0,0,col,row,19)
+   a.pointing=pointing
+   attach(a,tile_at(col,row))
+
+   add(tiles,a)
    return a
 end
 
@@ -68,36 +88,47 @@ function _init()
       end
    end
    
-   a = make_actor("pop",8,8,0,-1,1,1,1)
+   a = make_actor(_pop,8,8,0,-1,1,1,1)
    add(players,a)
    attach(a,tile_at(3,3))
    
-   a = make_actor("puff",8,8,0,-1,1,1,2)
+   a = make_actor(_puff,8,8,0,-1,1,1,2)
    add(players,a)
    attach(a,tile_at(2,1))
    make_tween(a,_y,(5+board_pad_y)*8,0.02)
 
-   a = make_actor("cake",8,8,0,-1,1,1,3)
+   a = make_actor(_cake,8,8,0,-1,1,1,3)
    attach(a,tile_at(1,4))
    add(tiles,a)
    make_tween(a,_x,(5+board_pad_x)*8,0.02)
    make_tween(a,_y,(1+board_pad_y)*8,0.02)
 
-   a = make_actor("arrow",8,8,0,0,1,1,19)
-   attach(a,tile_at(4,3))
-   add(tiles,a)	
+   make_arrow(_down,4,3)
+   make_arrow(_right,4,4)
 end
 
 function on_arrow_stepped(arrow,stepper)
-   printh("stepped on arrow")
-   make_tween(stepper,_y,arrow.y+8,0.1,on_tween_reached)
+   printh("7>>stepped on arrow pointing "..arrow.pointing)
+   local pointing = nil
+   if arrow.pointing == _left or arrow.pointing == _right then
+      pointing = _x
+   elseif arrow.pointing == _up or arrow.pointing == _down then
+      pointing = _y
+   end
+   
+   local direction = 1
+   if arrow.pointing == _left or arrow.pointing == _up then
+      direction = -1;
+   end
+
+   make_tween(stepper,pointing,(arrow.y+8)*direction,0.1,on_tween_reached)
 end
 
 function on_tween_reached(tween)
    printh("tween reached!")
    local p = tween.obj
    for i = 1,#p.parent.children,1 do
-      if p.parent.children[i].tag == "arrow" then
+      if p.parent.children[i].tag == _arrow then
 	 on_arrow_stepped(p.parent.children[i],p)
       end
    end
