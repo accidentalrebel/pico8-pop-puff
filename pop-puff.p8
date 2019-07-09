@@ -87,12 +87,13 @@ function _init()
 end
 
 function on_arrow_stepped(arrow,stepper)
-		
+	printh("stepped on arrow")
+	make_tween(stepper,"y",arrow.y+8,0.1,on_tween_reached)
 end
 
-function on_tween_reached()
+function on_tween_reached(tween)
 	printh("tween reached!")
-	local p=players[1]
+	local p=tween.obj
 	for i=1,#p.parent.children,1 do
 	 if p.parent.children[i].tag=="arrow" then
 	 	on_arrow_stepped(p.parent.children[i],p)
@@ -220,7 +221,7 @@ function tween__handle_reached(tween)
 		printh("tweendestroyed:"..#tweens)		
 		
 		if tween.on_reached != nil then
-			tween.on_reached()
+			tween.on_reached(tween)
 		end
 		return true
 	end
