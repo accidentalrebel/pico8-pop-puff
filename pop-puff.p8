@@ -56,6 +56,20 @@ function make_arrow(pointing,col,row)
    return a
 end
 
+function make_player(id,col,row)
+			local sprite = nil
+			if id == _pop then
+				sprite = 1
+			else
+				sprite = 2
+			end
+			local a = make_actor(id,0,0,0,-1,col,row,sprite)
+			add(players,a)
+   attach(a,tile_at(col,row))
+		
+			return a
+end
+
 function detach(a)
    if a.parent == nil then
       return
@@ -89,20 +103,16 @@ function _init()
       end
    end
    
-   a = make_actor(_pop,8,8,0,-1,1,1,1)
-   add(players,a)
-   attach(a,tile_at(3,3))
+   make_player(_pop,3,3)
    
-   a = make_actor(_puff,8,8,0,-1,1,1,2)
-   add(players,a)
-   attach(a,tile_at(2,1))
-   --make_tween(a,_y,(5+board_pad_y)*8,0.02)
+   a = make_player(_puff,1,1)
+   make_tween(a,_y,(5+board_pad_y)*8,0.02)
 
    a = make_actor(_cake,8,8,0,-1,1,1,3)
    attach(a,tile_at(1,4))
    add(tiles,a)
-   -- make_tween(a,_x,(5+board_pad_x)*8,0.02)
-   -- make_tween(a,_y,(1+board_pad_y)*8,0.02)
+   make_tween(a,_x,(5+board_pad_x)*8,0.02)
+   make_tween(a,_y,(1+board_pad_y)*8,0.02)
 
    make_arrow(_down,4,3)
    make_arrow(_right,4,4)
