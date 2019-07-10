@@ -66,6 +66,8 @@ function make_player(id,col,row)
 			local a = make_actor(id,0,0,0,-1,col,row,sprite)
 			add(players,a)
    attach(a,tile_at(col,row))
+   
+   a.pointing = nil
 		
 			return a
 end
@@ -103,7 +105,7 @@ function _init()
       end
    end
    
-   make_player(_pop,3,3)
+   make_player(_pop,3,2)
    
    a = make_player(_puff,1,1)
    make_tween(a,_y,(5+board_pad_y)*8,0.02)
@@ -114,7 +116,7 @@ function _init()
    make_tween(a,_x,(5+board_pad_x)*8,0.02)
    make_tween(a,_y,(1+board_pad_y)*8,0.02)
 
-   make_arrow(_down,4,3)
+--   make_arrow(_down,4,3)
    make_arrow(_right,4,4)
    make_arrow(_down,5,4)
    make_arrow(_left,5,5)
@@ -124,13 +126,13 @@ end
 
 function on_arrow_stepped(arrow,stepper)
    printh("7>>stepped on arrow pointing "..arrow.pointing)
-   local pointing = nil
+   local xory = nil
    local to_use=nil
    if arrow.pointing == _left or arrow.pointing == _right then
-      pointing = _x
+      xory = _x
       to_use = arrow.x
    elseif arrow.pointing == _up or arrow.pointing == _down then
-      pointing = _y
+      xory = _y
       to_use = arrow.y
    end
    
@@ -138,16 +140,49 @@ function on_arrow_stepped(arrow,stepper)
    if arrow.pointing == _left or arrow.pointing == _up then
       direction = -1;
    end
+   
+   stepper.pointing = arrow.pointing
+			printh("<<<<<<<"..stepper.pointing)
 
-   make_tween(stepper,pointing,to_use+(8*direction),0.1,on_tween_reached)
+   make_tween(stepper,xory,to_use+(8*direction),0.1,on_tween_reached)
+end
+
+function handle_sliding(slider)
+			local xory = nil
+			local target_pos = nil
+			if slider.pointing == _right
+				and slider.col+1 <= board_cols then
+				xory = _x
+				target_pos = slider.x+8
+			elseif slider.pointing == _left
+				and slider.col-1 >= 1 then
+				xory = _x
+				target_pos = slider.x-8
+			elseif slider.pointing == _up
+				and slider.row-1 >= 1 then
+					xory = _y
+					target_pos = slider.y-8
+			elseif slider.pointing == _down
+				and slider.row+1 <= board_rows then
+					xory = _y
+					target_pos = slider.y+8
+			end
+			
+			if xory != nil then
+				make_tween(slider,xory,target_pos,0.1,on_tween_reached)
+			end
 end
 
 function on_tween_reached(tween)
    printh("tween reached!")
    local p = tween.obj
    for i = 1,#p.parent.children,1 do
+      printh("one child of "..p.parent.tag.." is "..p.tag)
+      
       if p.parent.children[i].tag == _arrow then
 	 on_arrow_stepped(p.parent.children[i],p)
+      else
+      	handle_sliding(p)
       end
    end
 end
@@ -167,7 +202,20 @@ function control_player(player_num,dx,dy)
       x_or_y = _y
       to_use = t.y
    end
-   if t  !=  nil then
+   if x_or_y == _x then
+   	if dx > 0 then
+   		a.pointing = _right
+   	else
+   		a.pointing = _left
+   	end
+   else
+   	if dy > 0 then
+   		a.pointing = _down
+   	else
+   		a.pointing = _up
+   	end
+   end
+   if t !=  nil then
       make_tween(a,x_or_y,to_use,0.1,on_tween_reached)
       printh("0>>"..t.col..","..t.row)
    end
@@ -230,6 +278,11 @@ function make_tween(a,xory,target,seconds,on_reached)
    elseif xory == _y then
       current = a.y
    end
+   
+   if current == nil then
+   	printh("current is nil: >"..a.tag.."<")
+   end
+   
    if target > current then
       tween.direction = 1
    elseif target < current then
