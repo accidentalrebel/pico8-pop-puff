@@ -25,6 +25,7 @@ _right=2
 _down=3
 _left=4
 
+printh("##################################")
 function make_actor(tag,x,y,x_offset,y_offset,col,row,sprite)
    x = x or 0
    y = y or 0
@@ -105,7 +106,7 @@ function _init()
       end
    end
    
-   make_player(_pop,3,2)
+   make_player(_pop,2,1)
    
    a = make_player(_puff,1,1)
    make_tween(a,_y,(5+board_pad_y)*8,0.02)
@@ -116,12 +117,13 @@ function _init()
    make_tween(a,_x,(5+board_pad_x)*8,0.02)
    make_tween(a,_y,(1+board_pad_y)*8,0.02)
 
---   make_arrow(_down,4,3)
-   make_arrow(_right,4,4)
+   make_arrow(_down,3,1)
+   make_arrow(_right,3,4)
    make_arrow(_down,5,4)
    make_arrow(_left,5,5)
    make_arrow(_left,4,5)
-   make_arrow(_up,3,5)
+   make_arrow(_up,2,5)
+   make_arrow(_right,2,4)
 end
 
 function on_arrow_stepped(arrow,stepper)
@@ -176,13 +178,14 @@ end
 function on_tween_reached(tween)
    printh("tween reached!")
    local p = tween.obj
-   for i = 1,#p.parent.children,1 do
-      printh("one child of "..p.parent.tag.." is "..p.tag)
-      
+   for i = 1,#p.parent.children,1 do 
       if p.parent.children[i].tag == _arrow then
-	 on_arrow_stepped(p.parent.children[i],p)
-      else
-      	handle_sliding(p)
+								print("testa")
+	 						on_arrow_stepped(p.parent.children[i],p)
+	 						break
+      else --if p.parent.children[i] != p then
+	      	printh("testb")
+	      	handle_sliding(p)
       end
    end
 end
@@ -291,7 +294,7 @@ function make_tween(a,xory,target,seconds,on_reached)
       rbl_error("target should not be equal to current")
       return
    end
-   printh("-4>>"..tween.direction..";"..current..";"..target)
+   printh("-4>>"..tween.obj.tag..": "..tween.direction..";"..current..";"..target)
    tween.steps = (target-current)*seconds
    printh("-3>>"..tween.steps..";"..current..";"..target..";"..seconds)
    tween.target = target
