@@ -126,7 +126,7 @@ function _init()
       end
    end
    
-   make_player(_pop,1,1)
+   make_player(_pop,2,1)
    
    a = make_player(_puff,1,2)
    make_tween(a,_y,(5+board_pad_y)*8,0.02)
@@ -149,10 +149,14 @@ function _init()
    a=make_actor(_box,8,8,0,-1,0,0,_spr_box)
    attach(a,get_tile_at(3,1))
    add(tiles,a)
+
+   -- a=make_actor(_box,8,8,0,-1,0,0,_spr_box)
+   -- attach(a,get_tile_at(4,1))
+   -- add(tiles,a)
    
-   a=make_actor(_box,8,8,0,-1,0,0,_spr_box)
-   attach(a,get_tile_at(5,1))
-   add(tiles,a)
+   -- a=make_actor(_box,8,8,0,-1,0,0,_spr_box)
+   -- attach(a,get_tile_at(5,1))
+   -- add(tiles,a)
 end
 
 function pool(obj)
@@ -222,6 +226,11 @@ function handle_sliding(slider)
    end
 end
 
+function handle_pushing(obj,direction)
+   local next_tile = get_next_tile(obj,direction)
+   slide_to_tile(obj, next_tile.col, next_tile.row)
+end
+
 function on_tween_reached(tween)
    local p = tween.obj
 
@@ -234,8 +243,11 @@ function on_tween_reached(tween)
 	 on_cake_stepped(child,p)
 	 break	
       else
-	 
-	 if can_move_to_tile(p,get_next_tile(p,p.pointing)) then
+	 local next_tile=get_next_tile(p,p.pointing)
+	 if can_move_to_tile(p,next_tile) then
+	    if next_tile != nil then
+	       --handle_pushing(next_tile,p.pointing)
+	    end
 	    handle_sliding(p)
 	 end
 	 break
@@ -261,10 +273,15 @@ function get_child_of_type(tile, types)
    end
    local child = nil
    local typ = nil
-   for i=0,#tile.children,1 do
+   for i=1,#tile.children,1 do
       child=tile.children[i]
-      for j=0,#types,1 do
+      for j=1,#types,1 do
 	 typ = types[j]
+	 -- TEST
+	 if child != nil then
+	 end
+	 -- END_TEST
+
 	 if child != nil and child.tag == typ then
 	    return child
 	 end
@@ -287,11 +304,9 @@ function get_direction(a,b)
 end
    
 function can_move_to_tile(obj,target_tile)
-   printh("Checking if " .. obj.tag .. " can move to next tile...")
    if target_tile == nil then
       return false
    else
-      printh(#target_tile.children)
       if #target_tile.children <= 0 then
       	 return true
       else
@@ -307,12 +322,18 @@ function can_move_to_tile(obj,target_tile)
 end
 
 function slide_to_tile(a,col,row)
-   local target_pos = get_tile_at(col,row)
+   local target_tile = get_tile_at(col,row)
    if a.col != col then
-      make_tween(a,_x,target_pos.x,0.1,on_tween_reached)
+      make_tween(a,_x,target_tile.x,0.1,on_tween_reached)
    end
    if a.row != row then
-      make_tween(a,_y,target_pos.y,0.1,on_tween_reached)
+      make_tween(a,_y,target_tile.y,0.1,on_tween_reached)
+   end
+
+   local child = get_child_of_type(target_tile, {_box})
+   if child != nil then
+      local t = get_next_tile(child,get_direction(a,child))
+      slide_to_tile(child,t.col,t.row)
    end
 end
 
