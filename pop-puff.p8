@@ -23,10 +23,12 @@ _puff=2
 _cake=3
 _arrow=4
 _arrow_p=5
+_box=6
 
 _spr_cupcake=7
 _spr_arrow=3
 _spr_arrow_p=19
+_spr_box=45
 
 _up=1
 _right=2
@@ -120,9 +122,9 @@ function _init()
       end
    end
    
-   make_player(_pop,2,1)
+   make_player(_pop,1,1)
    
-   a = make_player(_puff,1,1)
+   a = make_player(_puff,1,2)
    make_tween(a,_y,(5+board_pad_y)*8,0.02)
 
    a = make_actor(_cake,8,8,0,-1,1,1,_spr_cupcake)
@@ -139,6 +141,10 @@ function _init()
    make_arrow(_arrow_p,_up,2,5)
    make_arrow(_arrow_p,_right,2,2)
    make_arrow(_arrow_p,_down,4,2)
+
+			a=make_actor(_box,8,8,0,-1,0,0,_spr_box)
+			attach(a,tile_at(3,1))
+			add(tiles,a)
 end
 
 function pool(obj)
@@ -156,7 +162,6 @@ end
 function on_cake_stepped(cake,stepper)
 			pool(cake)
 			printh("got cake")
---			put_pool(cake)
 end
 
 function on_arrow_stepped(arrow,stepper)
@@ -212,9 +217,20 @@ function handle_sliding(slider)
 			end
 end
 
+function check_next_tile(obj)
+	  local t = tile_at(obj.col+1,obj.row)
+	  for i=1,#t.children,1 do
+	  	local child = t.children[i]
+	  	if child.tag == _box then
+	  		make_tween(child,_x,child.x+8,0.1)
+	  	end
+	  end
+end
+
 function on_tween_reached(tween)
    printh("tween reached!")
    local p = tween.obj
+
    for i = 1,#p.parent.children,1 do 
       local child = p.parent.children[i]
       if child.tag == _arrow then
@@ -225,7 +241,9 @@ function on_tween_reached(tween)
 	 						break	
       else
 	      	printh("testb")
+	      	check_next_tile(p)
 	      	handle_sliding(p)
+	      	break
       end
    end
 end
@@ -359,7 +377,7 @@ function tween_handle_reached(tween)
       else
 	 tween.obj.y = tween.target
       end
-      printh("3.5>>"..tween.obj.col..";"..tween.obj.row)
+      printh("3.5>>"..tween.obj.tag..":"..tween.obj.col..";"..tween.obj.row)
       local t = tile_at(tween.obj.col,tween.obj.row)
       printh("4>>finding tile at:"..tween.obj.col..";"..tween.obj.row..";"..t.col..";"..t.row)
       attach(tween.obj,t)
@@ -400,13 +418,13 @@ __gfx__
 0000000060000006b333333307799977077779770779997707797777c444457544444444444454444444444ccc55453335cccccccccccccc4454444444454444
 0000000006666660b333333307799977077797770777977707779777cc4444544444444444444444444444cccccc44055ccccccccccccccc5444444555555555
 00000000094009400000000009400940000000000000000000000000cc44444444444444444444444444444444454050544444cc000000000000000000000000
-00000000099999900940094009999990000000000000000000000000c4474444444444444444444444466d44444545054547444c000000000000000000000000
-0000000099919199099999909991919900000000000000000000000044767bbbbbbbbbbbbbbbbbbbbbb6dd3bbb54545445767b44000000000000000000000000
-000000009ee995ee999191999ee995ee00000000000000000000000044373bbbbbbbbbbbbbbbbbbbbbb3333bbb55353545575b44000000000000000000000000
-00000000999944999ee995ee9999449900000000000000000000000044b3bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb33b3b35bb5b744000000000000000000000000
-0000000099999999999944999999999900000000000000000000000044bbbbbbbbbbbbbbb65bb65bbbbbbbbbbbbbbbbbbbbb7674000000000000000000000000
-0000000000499400949999490499400000000000000000000000000044bbbbbbbbbbbbbbb65bb33bbbbbbbbbbbbbbbbbbbbb5754000000000000000000000000
-0000000000900900009009000900900000000000000000000000000044bbbbbbbbbbbbbbb33bbbbbbbbbbbbbbbbbbbbbbbbbb544000000000000000000000000
+00000000099999900940094009999990000000000000000000000000c4474444444444444444444444466d44444545054547444c044444440000000000000000
+0000000099919199099999909991919900000000000000000000000044767bbbbbbbbbbbbbbbbbbbbbb6dd3bbb54545445767b44044fff440000000000000000
+000000009ee995ee999191999ee995ee00000000000000000000000044373bbbbbbbbbbbbbbbbbbbbbb3333bbb55353545575b4404f4f4f40000000000000000
+00000000999944999ee995ee9999449900000000000000000000000044b3bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb33b3b35bb5b74404ff4ff40000000000000000
+0000000099999999999944999999999900000000000000000000000044bbbbbbbbbbbbbbb65bb65bbbbbbbbbbbbbbbbbbbbb767404f4f4f40000000000000000
+0000000000499400949999490499400000000000000000000000000044bbbbbbbbbbbbbbb65bb33bbbbbbbbbbbbbbbbbbbbb5754044fff440000000000000000
+0000000000900900009009000900900000000000000000000000000044bbbbbbbbbbbbbbb33bbbbbbbbbbbbbbbbbbbbbbbbbb544044444440000000000000000
 0000000000227770000000000022777000000000000000000000000044bbbbbb44bbbbbbbbb6bbb6bbb6bbbfbbbbbb44bbbbbb44000000000000000000000000
 0000000002222220002277700222222000000000000000000000000044bbbbbb44bbbbbbb6bbb6bbb6bbb6bbbbbbbb44bbbbbb44000000000000000000000000
 0000000022212122022222202221212200000000000000000000000044bbbbbb44b7bbbbbbbfbbb6bbb6bbb6bbbbbb44bbbbbb44000000000000000000000000
