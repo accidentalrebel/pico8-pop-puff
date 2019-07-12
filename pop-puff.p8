@@ -14,6 +14,7 @@ board_pad_x = 4.5
 board_pad_y = 5
 i_index_arrows = 19
 slide_speed = 0.2
+current_player_index = 1
 
 -- enums
 _x=1
@@ -382,6 +383,11 @@ function control_player(player_num,dx,dy)
    if can_move_to_tile(a,t) then
       printh("started! "..a.x..","..a.y.." -- "..a.col..","..a.row)
       slide_to_tile(a,t.col,t.row)
+
+      current_player_index += 1
+      if current_player_index > 2 then
+	 current_player_index = 1
+      end
    end
 end
 
@@ -417,13 +423,13 @@ end
 
 function _update()
    if btnp(0) then
-      control_player(1,-1,0)
+      control_player(current_player_index,-1,0)
    elseif btnp(1) then
-      control_player(1,1,0)
+      control_player(current_player_index,1,0)
    elseif btnp(2) then
-      control_player(1,0,-1)
+      control_player(current_player_index,0,-1)
    elseif btnp(3) then
-      control_player(1,0,1)
+      control_player(current_player_index,0,1)
    end
    
    foreach(tweens,handle_tween)
