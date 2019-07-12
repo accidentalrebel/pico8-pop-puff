@@ -144,16 +144,16 @@ function _init()
    -- make_arrow(_arrow,_left,5,5)
    -- make_arrow(_arrow,_left,3,2)
    -- make_arrow(_arrow_p,_up,2,5)
-   -- make_arrow(_arrow_p,_right,2,2)
+   make_arrow(_arrow_p,_down,3,2)
    -- make_arrow(_arrow_p,_down,4,2)
 
    a=make_actor(_box,8,8,0,-1,0,0,_spr_box)
    attach(a,get_tile_at(3,1))
    add(tiles,a)
 
-   -- a=make_actor(_box,8,8,0,-1,0,0,_spr_box)
-   -- attach(a,get_tile_at(4,1))
-   -- add(tiles,a)
+   a=make_actor(_box,8,8,0,-1,0,0,_spr_box)
+   attach(a,get_tile_at(4,1))
+   add(tiles,a)
    
    -- a=make_actor(_box,8,8,0,-1,0,0,_spr_box)
    -- attach(a,get_tile_at(5,1))
@@ -250,11 +250,9 @@ function on_tween_reached(tween)
 	 break	
       else
 	 local next_tile=get_next_tile(p,p.pointing)
-	 if can_move_to_tile(p,next_tile) then
-	    if next_tile != nil then
-	       --handle_pushing(next_tile,p.pointing)
-	    end
-	    handle_sliding(p)
+	 if next_tile != nil and can_move_to_tile(p,next_tile) then
+	    printh("on tween reached..."..p.tag..": "..next_tile.col..","..next_tile.row)
+	    slide_to_tile(p,next_tile.col,next_tile.row)
 	 end
 	 break
       end
@@ -265,12 +263,13 @@ function get_next_tile(obj,direction)
    if direction == _up then
       return get_tile_at(obj.col,obj.row-1)
    elseif direction == _right then
-      return get_tile_at(obj.col+1,obj.row);
+      return get_tile_at(obj.col+1,obj.row)
    elseif direction == _down then
-      return get_tile_at(obj.col,obj.row+1);
-   else
-      return get_tile_at(obj.col-1,obj.row);
+      return get_tile_at(obj.col,obj.row+1)
+   elseif direction == _left then
+      return get_tile_at(obj.col-1,obj.row)
    end
+   return nil
 end
 
 function get_child_of_type(tile, types)
@@ -328,6 +327,7 @@ function can_move_to_tile(obj,target_tile)
 end
 
 function slide_to_tile(a,col,row)
+   printh(a.tag..a.col.."?="..col..";"..a.row.."?="..row)
    local target_tile = get_tile_at(col,row)
    if a.col != col then
       make_tween(a,_x,target_tile.x,0.1,on_tween_reached)
@@ -338,8 +338,11 @@ function slide_to_tile(a,col,row)
 
    local child = get_child_of_type(target_tile, {_box})
    if child != nil then
+      printh("handling child...")
       local t = get_next_tile(child,get_direction(a,child))
-      slide_to_tile(child,t.col,t.row)
+      child.pointhing = a.pointing
+
+      slide_to_tile(child,child.col+1,child.row)
 
       a.stop_on_next_tile = true
    end
@@ -376,6 +379,7 @@ function control_player(player_num,dx,dy)
       end
    end
    if can_move_to_tile(a,t) then
+      printh("controlling...")
       slide_to_tile(a,t.col,t.row)
    end
 end
