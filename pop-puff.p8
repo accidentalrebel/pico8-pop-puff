@@ -85,6 +85,7 @@ function make_player(id,col,row)
    attach(a,get_tile_at(col,row))
    
    a.pointing = nil
+   a.stop_on_next_tile = false
    
    return a
 end
@@ -234,6 +235,11 @@ end
 function on_tween_reached(tween)
    local p = tween.obj
 
+   if p.stop_on_next_tile then
+      p.stop_on_next_tile = false
+      return
+   end
+
    for i = 1,#p.parent.children,1 do 
       local child = p.parent.children[i]
       if child.tag == _arrow then
@@ -334,6 +340,8 @@ function slide_to_tile(a,col,row)
    if child != nil then
       local t = get_next_tile(child,get_direction(a,child))
       slide_to_tile(child,t.col,t.row)
+
+      a.stop_on_next_tile = true
    end
 end
 
