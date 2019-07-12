@@ -1,7 +1,6 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-rectfill(0,0,127,127,5)
 
 -- globals
 tiles = {}
@@ -449,6 +448,7 @@ end
 
 function _draw()
    cls()
+   rectfill(-4,0,127,127,12)   
    map(0,0,4,0,16,16)
    foreach(tiles,draw_actor)
    foreach(players,draw_actor)
