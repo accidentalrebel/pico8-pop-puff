@@ -18,12 +18,12 @@ i_index_arrows=19
 _x=1
 _y=2
 
-_pop=1
-_puff=2
-_cake=3
-_arrow=4
-_arrow_p=5
-_box=6
+_pop="pop"
+_puff="puff"
+_cake="cake"
+_arrow="arrow"
+_arrow_p="arrow_p"
+_box="box"
 
 _spr_cupcake=7
 _spr_arrow=3
@@ -105,7 +105,6 @@ function attach(a,b)
    a.row = b.row
    a.x = (a.col+board_pad_x)*8
    a.y = (a.row+board_pad_y)*8
-   printh("5>>"..a.x..";"..a.y..";"..b.col..";"..b.row)
 end
 
 function get_tile_at(col,row)
@@ -127,7 +126,7 @@ function _init()
       end
    end
    
-   make_player(_pop,5,1)
+   make_player(_pop,1,1)
    
    a = make_player(_puff,1,2)
    make_tween(a,_y,(5+board_pad_y)*8,0.02)
@@ -166,11 +165,9 @@ end
 
 function on_cake_stepped(cake,stepper)
    pool(cake)
-   printh("got cake")
 end
 
 function on_arrow_stepped(arrow,stepper)
-   printh("7>>stepped on arrow pointing "..arrow.pointing)
    local xory = nil
    local to_use=nil
    if arrow.pointing == _left or arrow.pointing == _right then
@@ -187,7 +184,6 @@ function on_arrow_stepped(arrow,stepper)
    end
    
    stepper.pointing = arrow.pointing
-   printh("<<<<<<<"..stepper.pointing)
 
    make_tween(stepper,xory,to_use+(8*direction),0.1,on_tween_reached)
    
@@ -223,7 +219,6 @@ function handle_sliding(slider)
 end
 
 function on_tween_reached(tween)
-   printh("tween reached!")
    local p = tween.obj
 
    for i = 1,#p.parent.children,1 do 
@@ -235,8 +230,9 @@ function on_tween_reached(tween)
 	 on_cake_stepped(child,p)
 	 break	
       else
-	 printh("testb")
-	 handle_sliding(p)
+	 if can_move_to_next_tile(p) then
+	    handle_sliding(p)
+	 end
 	 break
       end
    end
@@ -250,16 +246,34 @@ function get_next_tile(obj)
    elseif obj.pointing == _down then
       return get_tile_at(obj.col,obj.row+1);
    else
-      return get_tile_at(obj.col,obj.row);
+      return get_tile_at(obj.col-1,obj.row);
    end
 end
    
 function can_move_to_next_tile(obj)
+   printh("Checking if " .. obj.tag .. " can move to next tile...")
    local t = get_next_tile(obj)
    if t == nil then
       return false
+   else
+      printh(#t.children)
+      if #t.children <= 0 then
+      	 return true
+      end
+      -- else
+      -- 	 return can_move_to_next_tile(t)
+      -- end
    end
-   return true
+end
+
+function slide_to_tile(a,col,row)
+   local target_pos = get_tile_at(col,row)
+   if a.col != col then
+      make_tween(a,_x,target_pos.x,0.1,on_tween_reached)
+   end
+   if a.row != row then
+      make_tween(a,_y,target_pos.y,0.1,on_tween_reached)
+   end
 end
 
 function control_player(player_num,dx,dy)
@@ -270,7 +284,6 @@ function control_player(player_num,dx,dy)
    if t == nil then
       return
    end
-   printh("-1>>"..a.parent.col..";"..a.parent.row..";"..t.col..";"..t.row)
    local x_or_y = nil
    local to_use = nil
    if dx != 0 then
@@ -293,11 +306,8 @@ function control_player(player_num,dx,dy)
 	 a.pointing = _up
       end
    end
-   if t !=  nil then
-      --if can_move_to_next_tile(a) then
-	 make_tween(a,x_or_y,to_use,0.1,on_tween_reached)
-	 printh("0>>"..t.col..","..t.row)
-      --end
+   if can_move_to_next_tile(a) then
+      slide_to_tile(a,t.col,t.row)
    end
 end
 
@@ -310,12 +320,9 @@ function handle_tween(tween)
    elseif tween.xory == _y then
       tween.obj.y = rbl_fflr(tween.obj.y+tween.steps);
    end
-   printh("steps:"..tween.steps)
-   printh("obj.x:"..tween.obj.x..";obj.y:"..tween.obj.y)
    
    tween.obj.col = flr((tween.obj.x/8)-board_pad_x)
    tween.obj.row = flr((tween.obj.y/8)-board_pad_y)
-   printh("3>>"..tween.obj.col..";"..tween.obj.row)
 end
 
 function _update()
@@ -360,7 +367,6 @@ function make_tween(a,xory,target,seconds,on_reached)
    end
    
    if current == nil then
-      printh("current is nil: >"..a.tag.."<")
    end
    
    if target > current then
@@ -371,9 +377,7 @@ function make_tween(a,xory,target,seconds,on_reached)
       rbl_error("target should not be equal to current")
       return
    end
-   printh("-4>>"..tween.obj.tag..": "..tween.direction..";"..current..";"..target)
    tween.steps = (target-current)*seconds
-   printh("-3>>"..tween.steps..";"..current..";"..target..";"..seconds)
    tween.target = target
    add(tweens,tween)
    return tween
@@ -396,14 +400,11 @@ function tween_handle_reached(tween)
       else
 	 tween.obj.y = tween.target
       end
-      printh("3.5>>"..tween.obj.tag..":"..tween.obj.col..";"..tween.obj.row)
 
       local t = get_tile_at(tween.obj.col,tween.obj.row)
-      printh("4>>finding tile at:"..tween.obj.col..";"..tween.obj.row..";"..t.col..";"..t.row)
       attach(tween.obj,t)
       
       del(tweens,tween)
-      printh("tweendestroyed:"..#tweens)		
       
       if tween.on_reached != nil then
 	 tween.on_reached(tween)
@@ -418,7 +419,6 @@ function rbl_fflr(num)
 end
 
 function rbl_error(message)
-   printh(">>> error: "..message)
 end
 __gfx__
 00000000094009400022777000000000000000000000000000000000088e2e00cccccccccccccccccccccccccccccccccc4444445445444444445444444455cc
