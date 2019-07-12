@@ -22,6 +22,7 @@ _pop=1
 _puff=2
 _cake=3
 _arrow=4
+_arrow_p=5
 
 _up=1
 _right=2
@@ -51,9 +52,10 @@ function make_actor(tag,x,y,x_offset,y_offset,col,row,sprite)
    return a
 end
 
-function make_arrow(pointing,col,row)
+function make_arrow(arrow_type, pointing,col,row)
    local a = make_actor(_arrow,0,0,0,0,col,row,19+pointing-1)
    a.pointing=pointing
+   a.type = arrow_type
    
    attach(a,tile_at(col,row))
    add(tiles,a)
@@ -121,13 +123,13 @@ function _init()
    make_tween(a,_y,(1+board_pad_y)*8,0.02)
 
 --   make_arrow(_down,3,1)
-   make_arrow(_right,3,4)
-   make_arrow(_down,5,4)
-   make_arrow(_left,5,5)
-   make_arrow(_left,4,5)
-   make_arrow(_up,2,5)
-   make_arrow(_right,2,2)
-   make_arrow(_down,4,2)
+   make_arrow(_arrow, _right,3,5)
+   make_arrow(_arrow_p, _up,4,5)
+--   make_arrow(_left,5,5)
+--   make_arrow(_left,4,5)
+--   make_arrow(_up,2,5)
+--   make_arrow(_right,2,2)
+--   make_arrow(_down,4,2)
 end
 
 function pool(obj)
@@ -169,6 +171,10 @@ function on_arrow_stepped(arrow,stepper)
 			printh("<<<<<<<"..stepper.pointing)
 
    make_tween(stepper,xory,to_use+(8*direction),0.1,on_tween_reached)
+   
+   if arrow.type == _arrow then
+   	pool(arrow)
+   end
 end
 
 function handle_sliding(slider)
