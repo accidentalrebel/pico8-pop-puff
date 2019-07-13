@@ -33,12 +33,14 @@ _arrow_p="arrow_p"
 _box="box"
 _hole="hole"
 _highlight="highlight"
+_switch="switch"
 
 _spr_cupcake=7
 _spr_arrow=3
 _spr_arrow_p=19
 _spr_box=45
 _spr_hole=46
+_spr_switch=47
 _spr_highlight=64
 
 _up=1
@@ -64,6 +66,7 @@ function make_actor(tag,x,y,x_offset,y_offset,col,row,sprite)
    a.y_offset = y_offset
    a.spr = sprite
    a.tag = tag
+   a.visible = true
    a.parent = nil
    a.children = {}
    return a
@@ -101,6 +104,12 @@ function make_player(id,col,row)
    return a
 end
 
+function make_switch(col,row)
+   local switch = make_actor(_switch,8,8,1,1,0,0,_spr_switch)
+   add(tiles,switch)
+   attach(switch,get_tile_at(col,row))
+end
+
 function make_highlight()
    local highlight = make_actor(_highlight,8,8,1,1,0,0,0)
    highlight.top_left = make_actor(_highlight,8,8,1,1,0,0,_spr_highlight)
@@ -110,6 +119,7 @@ function make_highlight()
    add(ui,highlight)
    attach(highlight,get_tile_at(3,3))
 
+   highlight.visible = false
    highlight.on_draw = draw_highlight
    return highlight
 end
@@ -190,6 +200,8 @@ function _init()
    attach(a,get_tile_at(2,2))
    add(tiles,a)
 
+   make_switch(3,4)
+   
    highlight = make_highlight()
 end
 
@@ -481,8 +493,10 @@ function _update()
    elseif btnp(4) then
       if is_highlight_mode then
 	 is_highlight_mode = false
+	 highlight.visible = false
       else
 	 is_highlight_mode = true
+	 highlight.visible = true
       end
    elseif btnp(5) then
       if is_highlight_mode then
@@ -508,6 +522,10 @@ function draw_actor(a)
 end
 
 function draw_highlight(c)
+   if not c.visible then
+      return
+   end
+
    local sx = c.x+c.x_offset
    local sy = c.y+c.y_offset
    
@@ -641,11 +659,11 @@ __gfx__
 00000000aaaaaaa5b333333307799977077779770779997707797777c444457544444444444454444444444ccc55453335cccccccccccccc4454444444454444
 0000000055555555b333333307799977077797770777977707779777cc4444544444444444444444444444cccccc44055ccccccccccccccc5444444555555555
 00000000094009400000000009400940000000000000000000000000cc44444444444444444444444444444444454050544444cc000000000000000000000000
-00000000099999900940094009999990000000000000000000000000c4474444444444444444444444466d44444545054547444c044444440444444400000000
-0000000099919199099999909991919900000000000000000000000044767bbbbbbbbbbbbbbbbbbbbbb6dd3bbb54545445767b44044fff440444444400000000
-000000009ee995ee999191999ee995ee00000000000000000000000044373bbbbbbbbbbbbbbbbbbbbbb3333bbb55353545575b4404f4f4f40454545400000000
-00000000999944999ee995ee9999449900000000000000000000000044b3bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb33b3b35bb5b74404ff4ff40545454500000000
-0000000099999999999944999999999900000000000000000000000044bbbbbbbbbbbbbbb65bb65bbbbbbbbbbbbbbbbbbbbb767404f4f4f40454545400000000
+00000000099999900940094009999990000000000000000000000000c4474444444444444444444444466d44444545054547444c044444440444444406666600
+0000000099919199099999909991919900000000000000000000000044767bbbbbbbbbbbbbbbbbbbbbb6dd3bbb54545445767b44044fff440444444406888d00
+000000009ee995ee999191999ee995ee00000000000000000000000044373bbbbbbbbbbbbbbbbbbbbbb3333bbb55353545575b4404f4f4f40454545406888d00
+00000000999944999ee995ee9999449900000000000000000000000044b3bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb33b3b35bb5b74404ff4ff40545454506888d00
+0000000099999999999944999999999900000000000000000000000044bbbbbbbbbbbbbbb65bb65bbbbbbbbbbbbbbbbbbbbb767404f4f4f40454545406dddd00
 0000000000499400949999490499400000000000000000000000000044bbbbbbbbbbbbbbb65bb33bbbbbbbbbbbbbbbbbbbbb5754044fff440555555500000000
 0000000000900900009009000900900000000000000000000000000044bbbbbbbbbbbbbbb33bbbbbbbbbbbbbbbbbbbbbbbbbb544044444440555555500000000
 0000000000227770000000000022777000000000000000000000000044bbbbbb44bbbbbbbbb6bbb6bbb6bbbfbbbbbb44bbbbbb44000000000000000000000000
