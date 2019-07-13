@@ -100,6 +100,7 @@ function make_player(id,col,row)
    
    a.pointing = nil
    a.stop_on_next_tile = false
+   a.is_traveling = false
    
    return a
 end
@@ -261,10 +262,29 @@ function on_arrow_stepped(arrow,stepper)
    end
 end
 
+function on_reached_destination(obj)
+   printh("I "..obj.tag.." reached my final destination")
+
+   if obj.tag == _pop or obj.tag == _puff then
+      obj.is_traveling = false
+
+      local current_player = players[current_player_index]
+      printh(".."..current_player.tag)
+      if obj.tag == players[current_player_index].tag then
+	 current_player_index += 1
+	 if current_player_index > 2 then
+	    current_player_index = 1
+	 end
+      end
+   end
+end
+
 function continue_sliding(slider)
    local next_tile=get_next_tile(slider,slider.pointing)
    if next_tile != nil and can_move_to_tile(slider,next_tile) then
       slide_to_tile(slider,next_tile.col,next_tile.row)
+   else
+      on_reached_destination(slider)
    end
 end
 
@@ -275,28 +295,35 @@ function on_tween_reached(tween)
       return
    end
 
+   local can_stop = true
    for child in all(p.parent.children) do 
       if child.tag == _arrow or child.tag == _arrow_p then
 	 on_arrow_stepped(child,p)
+	 can_stop = false
 	 break
       elseif child.tag == _switch then
 	 on_switch_stepped(child,p)
 	 continue_sliding(p)
+	 can_stop = false
 	 break
       elseif child.tag == _cake then
 	 on_cake_stepped(child,p)
+	 can_stop = false
 	 break
       elseif child.tag == _hole then
 	 on_hole_stepped(child,p)
+	 can_stop = false
 	 break
       else
 	 if p.stop_on_next_tile then
 	    printh("Stopped on next tile!" .. p.tag)
+	    on_reached_destination(p)
 	    p.stop_on_next_tile = false
 	    return
 	 end
 	 
 	 continue_sliding(p)
+	 can_stop = false
 	 break
       end
    end
@@ -392,6 +419,10 @@ function control_player(player_num,dx,dy)
    dx = dx or 0
    dy = dy or 0
    local a = players[player_num]
+   if a.is_traveling then
+      return
+   end
+   
    local t = get_tile_at(a.parent.col+dx,a.parent.row+dy);
    if t == nil then
       return
@@ -419,13 +450,10 @@ function control_player(player_num,dx,dy)
       end
    end
    if can_move_to_tile(a,t) then
+      a.is_traveling = true
+      
       printh("started! "..a.x..","..a.y.." -- "..a.col..","..a.row)
       slide_to_tile(a,t.col,t.row)
-
-      current_player_index += 1
-      if current_player_index > 2 then
-	 current_player_index = 1
-      end
    end
 end
 
