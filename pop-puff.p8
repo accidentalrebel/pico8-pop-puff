@@ -104,10 +104,14 @@ function make_player(id,col,row)
    return a
 end
 
-function make_switch(col,row)
+function make_switch(col,row,t_col,t_row)
    local switch = make_actor(_switch,8,8,1,1,0,0,_spr_switch)
    add(tiles,switch)
    attach(switch,get_tile_at(col,row))
+
+   local t = get_tile_at(t_col,t_row)
+   switch.control = get_child_of_type(t,{_arrow,_arrow_p})
+   return switch
 end
 
 function make_highlight()
@@ -200,7 +204,7 @@ function _init()
    attach(a,get_tile_at(2,2))
    add(tiles,a)
 
-   make_switch(3,4)
+   make_switch(3,4,1,5)
    
    highlight = make_highlight()
 end
@@ -217,8 +221,14 @@ function pool(obj)
    end
 end
 
-function on_hole_stepped(cake,stepper)
+function on_hole_stepped(hole,stepper)
    
+end
+
+function on_switch_stepped(switch,stepper)
+   if switch.control.tag == _arrow or switch.control.tag == _arrow_p then
+      rotate_arrow(switch.control)
+   end
 end
 
 function on_cake_stepped(cake,stepper)
@@ -251,6 +261,13 @@ function on_arrow_stepped(arrow,stepper)
    end
 end
 
+function continue_sliding(slider)
+   local next_tile=get_next_tile(slider,slider.pointing)
+   if next_tile != nil and can_move_to_tile(slider,next_tile) then
+      slide_to_tile(slider,next_tile.col,next_tile.row)
+   end
+end
+
 function on_tween_reached(tween)
    local p = tween.obj
 
@@ -261,6 +278,10 @@ function on_tween_reached(tween)
    for child in all(p.parent.children) do 
       if child.tag == _arrow or child.tag == _arrow_p then
 	 on_arrow_stepped(child,p)
+	 break
+      elseif child.tag == _switch then
+	 on_switch_stepped(child,p)
+	 continue_sliding(p)
 	 break
       elseif child.tag == _cake then
 	 on_cake_stepped(child,p)
@@ -275,10 +296,7 @@ function on_tween_reached(tween)
 	    return
 	 end
 	 
-	 local next_tile=get_next_tile(p,p.pointing)
-	 if next_tile != nil and can_move_to_tile(p,next_tile) then
-	    slide_to_tile(p,next_tile.col,next_tile.row)
-	 end
+	 continue_sliding(p)
 	 break
       end
    end
