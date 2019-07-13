@@ -182,6 +182,10 @@ function pool(obj)
    end
 end
 
+function on_hole_stepped(cake,stepper)
+   
+end
+
 function on_cake_stepped(cake,stepper)
    pool(cake)
 end
@@ -221,7 +225,10 @@ function on_tween_reached(tween)
 	 break
       elseif child.tag == _cake then
 	 on_cake_stepped(child,p)
-	 break	
+	 break
+      elseif child.tag == _hole then
+	 on_hole_stepped(child,p)
+	 break
       else
 	 if p.stop_on_next_tile then
 	    printh("Stopped on next tile!" .. p.tag)
