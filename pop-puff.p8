@@ -4,6 +4,8 @@ __lua__
 -- pop puff and away!
 -- by accidental rebel
 
+#include powerkit.lua
+
 -- globals
 board_rows = 5
 board_cols = 5
@@ -681,23 +683,6 @@ function tween_handle_reached(tween)
       return true
    end
    return false
-end
--->8
--- powerkit
-function rbl_fflr(num)
-   return flr(num*100)/100
-end
-
-function rbl_fceil(num)
-   return ceil(num*100)/100
-end
-
-function rbl_assert(cond,message)
-   if (not cond) rbl_error(message)
-end
-
-function rbl_error(message)
-   printh(">>>>>>> ERROR: "..message)
 end
 __gfx__
 00000000094009400022777000000000000000000000000000000000088e2e00cccccccccccccccccccccccccccccccccc4444445445444444445444444455cc
