@@ -105,14 +105,23 @@ function make_player(id,col,row)
    return a
 end
 
-function make_switch(col,row,t_col,t_row)
+function make_switch(col,row)
    local switch = make_actor(_switch,8,8,1,1,0,0,_spr_switch)
    add(tiles,switch)
    attach(switch,get_tile_at(col,row))
 
-   local t = get_tile_at(t_col,t_row)
-   switch.control = get_child_of_type(t,{_arrow,_arrow_p})
+   switch.slaves = {}
    return switch
+end
+
+function add_switch_slave(switch,col,row)
+   local t = get_tile_at(col,row)
+   if (t == nil) rbl_error("Tile at "..col..","..row.." could not be found!")
+
+   local slave = get_child_of_type(t,{_arrow,_arrow_p})
+   if (slave == nil) rbl_error("Slave should not be null!")
+
+   add(switch.slaves,slave)
 end
 
 function make_highlight()
@@ -181,7 +190,9 @@ function _init()
    make_arrow(_arrow_p,_up,4,5)
    make_arrow(_arrow,_up,1,5)
 
-   make_switch(3,4,1,5)   
+   a=make_switch(3,4,1,5)
+   add_switch_slave(a,1,5)
+   add_switch_slave(a,3,2)
 
    a=make_actor(_box,8,8,0,-1,0,0,_spr_box)
    attach(a,get_tile_at(3,1))
@@ -227,8 +238,10 @@ function on_hole_stepped(hole,stepper)
 end
 
 function on_switch_stepped(switch,stepper)
-   if switch.control.tag == _arrow or switch.control.tag == _arrow_p then
-      rotate_arrow(switch.control)
+   for slave in all(switch.slaves) do
+      if slave.tag == _arrow or slave.tag == _arrow_p then
+	 rotate_arrow(slave)
+      end
    end
 end
 
@@ -680,6 +693,7 @@ function rbl_fceil(num)
 end
 
 function rbl_error(message)
+   printh(">>>>>>> ERROR: "..message)
 end
 __gfx__
 00000000094009400022777000000000000000000000000000000000088e2e00cccccccccccccccccccccccccccccccccc4444445445444444445444444455cc
