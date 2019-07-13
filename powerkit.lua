@@ -12,6 +12,10 @@ function assert(cond,message)
    end
 end
 
+function log(message)
+   printh(message)
+end
+
 function error(message)
    printh(">>>>>>> ERROR: "..message)
 end
