@@ -181,6 +181,8 @@ function _init()
    make_arrow(_arrow_p,_up,4,5)
    make_arrow(_arrow,_up,1,5)
 
+   make_switch(3,4,1,5)   
+
    a=make_actor(_box,8,8,0,-1,0,0,_spr_box)
    attach(a,get_tile_at(3,1))
    add(tiles,a)
@@ -204,8 +206,6 @@ function _init()
    a=make_actor(_hole,8,8,0,0,0,0,_spr_hole)
    attach(a,get_tile_at(2,2))
    add(tiles,a)
-
-   make_switch(3,4,1,5)
    
    highlight = make_highlight()
 end
@@ -295,13 +295,13 @@ function on_tween_reached(tween)
       return
    end
 
-   for child in all(p.parent.children) do 
+   for child in all(p.parent.children) do
+      if child.tag == _switch then
+	 on_switch_stepped(child,p)
+      end
+      
       if child.tag == _arrow or child.tag == _arrow_p then
 	 on_arrow_stepped(child,p)
-	 break
-      elseif child.tag == _switch then
-	 on_switch_stepped(child,p)
-	 continue_sliding(p)
 	 break
       elseif child.tag == _cake then
 	 on_cake_stepped(child,p)
