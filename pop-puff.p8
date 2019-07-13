@@ -13,8 +13,8 @@ i_index_arrows = 19
 slide_speed = 0.2
 current_player_index = 1
 
-cursor = nil
-is_cursor_mode = false
+highlight = nil
+is_highlight_mode = false
 tiles = {}
 players = {}
 tweens = {}
@@ -32,14 +32,14 @@ _arrow="arrow"
 _arrow_p="arrow_p"
 _box="box"
 _hole="hole"
-_cursor="cursor"
+_highlight="highlight"
 
 _spr_cupcake=7
 _spr_arrow=3
 _spr_arrow_p=19
 _spr_box=45
 _spr_hole=46
-_spr_cursor=64
+_spr_highlight=64
 
 _up=1
 _right=2
@@ -101,17 +101,17 @@ function make_player(id,col,row)
    return a
 end
 
-function make_cursor()
-   local cursor = make_actor(_cursor,8,8,1,1,0,0,0)
-   cursor.top_left = make_actor(_cursor,8,8,1,1,0,0,_spr_cursor)
-   cursor.top_right = make_actor(_cursor,8,8,1,1,0,0,_spr_cursor+1)
-   cursor.bottom_right = make_actor(_cursor,8,8,1,1,0,0,_spr_cursor+2)
-   cursor.bottom_left = make_actor(_cursor,8,8,1,1,0,0,_spr_cursor+3)
-   add(ui,cursor)
-   attach(cursor,get_tile_at(3,3))
+function make_highlight()
+   local highlight = make_actor(_highlight,8,8,1,1,0,0,0)
+   highlight.top_left = make_actor(_highlight,8,8,1,1,0,0,_spr_highlight)
+   highlight.top_right = make_actor(_highlight,8,8,1,1,0,0,_spr_highlight+1)
+   highlight.bottom_right = make_actor(_highlight,8,8,1,1,0,0,_spr_highlight+2)
+   highlight.bottom_left = make_actor(_highlight,8,8,1,1,0,0,_spr_highlight+3)
+   add(ui,highlight)
+   attach(highlight,get_tile_at(3,3))
 
-   cursor.on_draw = draw_cursor
-   return cursor
+   highlight.on_draw = draw_highlight
+   return highlight
 end
 
 function detach(a)
@@ -190,7 +190,7 @@ function _init()
    attach(a,get_tile_at(2,2))
    add(tiles,a)
 
-   cursor = make_cursor()
+   highlight = make_highlight()
 end
 
 function pool(obj)
@@ -242,7 +242,7 @@ end
 function on_tween_reached(tween)
    local p = tween.obj
 
-   if p.tag == _cursor then
+   if p.tag == _highlight then
       return
    end
 
@@ -345,7 +345,7 @@ function slide_to_tile(a,col,row)
       make_tween(a,_y,target_tile.y,slide_speed,on_tween_reached)
    end
 
-   if a.tag != _cursor then
+   if a.tag != _highlight then
       local child = get_child_of_type(target_tile, {_box,_pop,_puff})
       if child != nil then
 	 local t = get_next_tile(child,get_direction(a,child))
@@ -428,40 +428,40 @@ function handle_tween(tween)
    end
 end
 
-function control_cursor(dx,dy)
-   slide_to_tile(cursor,cursor.col+dx,cursor.row+dy)
+function control_highlight(dx,dy)
+   slide_to_tile(highlight,highlight.col+dx,highlight.row+dy)
 end
 
 function _update()
    if btnp(0) then
-      if is_cursor_mode then
-	 control_cursor(-1,0)
+      if is_highlight_mode then
+	 control_highlight(-1,0)
       else
 	 control_player(current_player_index,-1,0)
       end
    elseif btnp(1) then
-      if is_cursor_mode then
-	 control_cursor(1,0)
+      if is_highlight_mode then
+	 control_highlight(1,0)
       else
 	 control_player(current_player_index,1,0)
       end
    elseif btnp(2) then
-      if is_cursor_mode then      
-	 control_cursor(0,-1)
+      if is_highlight_mode then      
+	 control_highlight(0,-1)
       else
 	 control_player(current_player_index,0,-1)
       end
    elseif btnp(3) then
-      if is_cursor_mode then
-	 control_cursor(0,1)
+      if is_highlight_mode then
+	 control_highlight(0,1)
       else
 	 control_player(current_player_index,0,1)
       end
    elseif btnp(4) then
-      if is_cursor_mode then
-	 is_cursor_mode = false
+      if is_highlight_mode then
+	 is_highlight_mode = false
       else
-	 is_cursor_mode = true
+	 is_highlight_mode = true
       end
    end
    
@@ -478,7 +478,7 @@ function draw_actor(a)
    end
 end
 
-function draw_cursor(c)
+function draw_highlight(c)
    local sx = c.x+c.x_offset
    local sy = c.y+c.y_offset
    
@@ -495,6 +495,14 @@ function _draw()
    foreach(tiles,draw_actor)
    foreach(players,draw_actor)
    foreach(ui,draw_actor)
+
+   if is_highlight_mode then
+      print("cursor mode",2,2,1)
+   elseif current_player_index == 1 then
+      print("current player: pop",2,2,1)
+   else
+      print("current player: puff",2,2,1)
+   end
 end
 -->8
 -- tween
