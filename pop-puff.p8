@@ -17,6 +17,7 @@ board_pad_y = 5
 i_index_arrows = 19
 slide_speed = 0.2
 current_player_index = 1
+cursor = nil
 
 -- enums
 _x=1
@@ -108,6 +109,7 @@ function make_cursor()
    attach(cursor,get_tile_at(3,3))
 
    cursor.on_draw = draw_cursor
+   return cursor
 end
 
 function detach(a)
@@ -186,7 +188,7 @@ function _init()
    attach(a,get_tile_at(2,2))
    add(tiles,a)
 
-   make_cursor()
+   cursor = make_cursor()
 end
 
 function pool(obj)
@@ -237,6 +239,10 @@ end
 
 function on_tween_reached(tween)
    local p = tween.obj
+
+   if p.tag == _cursor then
+      return
+   end
 
    for child in all(p.parent.children) do 
       if child.tag == _arrow then
@@ -337,13 +343,15 @@ function slide_to_tile(a,col,row)
       make_tween(a,_y,target_tile.y,slide_speed,on_tween_reached)
    end
 
-   local child = get_child_of_type(target_tile, {_box,_pop,_puff})
-   if child != nil then
-      local t = get_next_tile(child,get_direction(a,child))
-      child.pointing = a.pointing
-      slide_to_tile(child,t.col,t.row)
+   if a.tag != _cursor then
+      local child = get_child_of_type(target_tile, {_box,_pop,_puff})
+      if child != nil then
+	 local t = get_next_tile(child,get_direction(a,child))
+	 child.pointing = a.pointing
+	 slide_to_tile(child,t.col,t.row)
 
-      a.stop_on_next_tile = true
+	 a.stop_on_next_tile = true
+      end
    end
 end
 
@@ -418,15 +426,23 @@ function handle_tween(tween)
    end
 end
 
+function control_cursor(dx,dy)
+   slide_to_tile(cursor,cursor.col+dx,cursor.row+dy)
+end
+
 function _update()
    if btnp(0) then
       control_player(current_player_index,-1,0)
+      control_cursor(-1,0)
    elseif btnp(1) then
       control_player(current_player_index,1,0)
+      control_cursor(1,0)
    elseif btnp(2) then
       control_player(current_player_index,0,-1)
+      control_cursor(0,-1)
    elseif btnp(3) then
       control_player(current_player_index,0,1)
+      control_cursor(0,1)
    end
    
    foreach(tweens,handle_tween)
