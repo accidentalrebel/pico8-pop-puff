@@ -3,13 +3,8 @@ version 18
 __lua__
 -- pop puff and away!
 -- by accidental rebel
--- globals
-tiles = {}
-players = {}
-tweens = {}
-tpool = {}
-ui = {}
 
+-- globals
 board_rows = 5
 board_cols = 5
 board_pad_x = 4.5
@@ -17,7 +12,14 @@ board_pad_y = 5
 i_index_arrows = 19
 slide_speed = 0.2
 current_player_index = 1
+
 cursor = nil
+is_cursor_mode = false
+tiles = {}
+players = {}
+tweens = {}
+tpool = {}
+ui = {}
 
 -- enums
 _x=1
@@ -432,17 +434,35 @@ end
 
 function _update()
    if btnp(0) then
-      control_player(current_player_index,-1,0)
-      control_cursor(-1,0)
+      if is_cursor_mode then
+	 control_cursor(-1,0)
+      else
+	 control_player(current_player_index,-1,0)
+      end
    elseif btnp(1) then
-      control_player(current_player_index,1,0)
-      control_cursor(1,0)
+      if is_cursor_mode then
+	 control_cursor(1,0)
+      else
+	 control_player(current_player_index,1,0)
+      end
    elseif btnp(2) then
-      control_player(current_player_index,0,-1)
-      control_cursor(0,-1)
+      if is_cursor_mode then      
+	 control_cursor(0,-1)
+      else
+	 control_player(current_player_index,0,-1)
+      end
    elseif btnp(3) then
-      control_player(current_player_index,0,1)
-      control_cursor(0,1)
+      if is_cursor_mode then
+	 control_cursor(0,1)
+      else
+	 control_player(current_player_index,0,1)
+      end
+   elseif btnp(4) then
+      if is_cursor_mode then
+	 is_cursor_mode = false
+      else
+	 is_cursor_mode = true
+      end
    end
    
    foreach(tweens,handle_tween)
