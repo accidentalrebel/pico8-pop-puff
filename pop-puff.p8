@@ -295,24 +295,19 @@ function on_tween_reached(tween)
       return
    end
 
-   local can_stop = true
    for child in all(p.parent.children) do 
       if child.tag == _arrow or child.tag == _arrow_p then
 	 on_arrow_stepped(child,p)
-	 can_stop = false
 	 break
       elseif child.tag == _switch then
 	 on_switch_stepped(child,p)
 	 continue_sliding(p)
-	 can_stop = false
 	 break
       elseif child.tag == _cake then
 	 on_cake_stepped(child,p)
-	 can_stop = false
 	 break
       elseif child.tag == _hole then
 	 on_hole_stepped(child,p)
-	 can_stop = false
 	 break
       else
 	 if p.stop_on_next_tile then
@@ -323,7 +318,6 @@ function on_tween_reached(tween)
 	 end
 	 
 	 continue_sliding(p)
-	 can_stop = false
 	 break
       end
    end
