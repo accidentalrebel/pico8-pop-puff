@@ -15,6 +15,7 @@ slide_speed = 0.2
 current_player_index = 1
 
 highlight = nil
+cupcake_counter_label = nil
 is_highlight_mode = false
 tiles = {}
 cupcakes = {}
@@ -36,6 +37,7 @@ _box="box"
 _hole="hole"
 _highlight="highlight"
 _switch="switch"
+_ui_label="ui_label"
 
 _spr_cupcake=7
 _spr_arrow=3
@@ -93,6 +95,19 @@ function _init()
 
    a=make_actor("cupcake_ui",108,2,0,0,0,0,_spr_cupcake)
    add(ui,a)
+
+   cupcake_counter_label = make_ui_label("x1",118,4)
+end
+
+function make_ui_label(text,x,y)
+   a = {}
+   a.x = x
+   a.y = y
+   a.text = text
+   a.tag = _ui_label
+   a.on_draw = draw_ui
+   add(ui,a)
+   return a
 end
 
 function make_actor(tag,x,y,x_offset,y_offset,col,row,sprite)
@@ -252,6 +267,7 @@ end
 
 function on_cupcake_stepped(cake,stepper)
    pool(cake)
+   cupcake_counter_label.text = "x"..#cupcakes
 end
 
 function on_arrow_stepped(arrow,stepper)
@@ -582,16 +598,10 @@ function draw_highlight(c)
    spr(c.bottom_left.spr, sx-3, sy+2)
 end
 
-function draw_ui()
-   if is_highlight_mode then
-      print("cursor mode",2,2,1)
-   elseif current_player_index == 1 then
-      print("current player: pop",2,2,1)
-   else
-      print("current player: puff",2,2,1)
+function draw_ui(ui)
+   if ui.tag == _ui_label then
+      print(ui.text,ui.x,ui.y,1)
    end
-
-   print("x"..#cupcakes,118,4,1)
 end
 
 function _draw()
@@ -603,7 +613,13 @@ function _draw()
    foreach(players,draw_actor)
    foreach(ui,draw_actor)
 
-   draw_ui()
+   if is_highlight_mode then
+      print("cursor mode",2,2,1)
+   elseif current_player_index == 1 then
+      print("current player: pop",2,2,1)
+   else
+      print("current player: puff",2,2,1)
+   end
 end
 -->8
 -- tween
