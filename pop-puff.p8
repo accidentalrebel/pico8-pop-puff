@@ -17,6 +17,7 @@ current_player_index = 1
 highlight = nil
 is_highlight_mode = false
 tiles = {}
+cupcakes = {}
 players = {}
 tweens = {}
 tpool = {}
@@ -59,8 +60,10 @@ function _init()
       end
    end
 
-   make_player(_puff,3,3)
+   make_cupcake(3,1)
+
    make_player(_pop,3,2)
+   make_player(_puff,3,3)
 
 
    -- a = make_actor(_cake,8,8,0,-1,1,1,_spr_cupcake)
@@ -87,6 +90,9 @@ function _init()
    -- add(tiles,a)
    
    highlight = make_highlight()
+
+   a=make_actor("cupcake_ui",108,2,0,0,0,0,_spr_cupcake)
+   add(ui,a)
 end
 
 function make_actor(tag,x,y,x_offset,y_offset,col,row,sprite)
@@ -125,6 +131,12 @@ function make_arrow(arrow_type, pointing,col,row)
    attach(a,get_tile_at(col,row))
    add(tiles,a)
    return a
+end
+
+function make_cupcake(col,row)
+   local cupcake = make_actor(_cupcake,8,8,0,-1,0,0,_spr_cupcake)
+   attach(cupcake,get_tile_at(col,row))
+   add(cupcakes,cupcake)   
 end
 
 function make_player(id,col,row)
@@ -216,8 +228,9 @@ end
 function pool(obj)
    detach(obj)
    add(tpool,obj)
-   if obj.tag == _cake 
-   or obj.tag == _arrow then
+   if obj.tag == _cupcake then
+      del(cupcakes,obj)
+   elseif obj.tag == _arrow then
       del(tiles,obj)
    elseif obj.tag == _pop
    or obj.tag == _puff then
@@ -237,7 +250,7 @@ function on_switch_stepped(switch,stepper)
    end
 end
 
-function on_cake_stepped(cake,stepper)
+function on_cupcake_stepped(cake,stepper)
    pool(cake)
 end
 
@@ -301,12 +314,13 @@ function on_tween_reached(tween)
       if child.tag == _switch then
 	 on_switch_stepped(child,p)
       end
+
+      if child.tag == _cupcake then
+	 on_cupcake_stepped(child,p)
+      end
       
       if child.tag == _arrow or child.tag == _arrow_p then
 	 on_arrow_stepped(child,p)
-	 break
-      elseif child.tag == _cake then
-	 on_cake_stepped(child,p)
 	 break
       elseif child.tag == _hole then
 	 on_hole_stepped(child,p)
@@ -568,14 +582,7 @@ function draw_highlight(c)
    spr(c.bottom_left.spr, sx-3, sy+2)
 end
 
-function _draw()
-   cls()
-   rectfill(-4,0,127,127,12)   
-   map(0,0,4,0,16,16)
-   foreach(tiles,draw_actor)
-   foreach(players,draw_actor)
-   foreach(ui,draw_actor)
-
+function draw_ui()
    if is_highlight_mode then
       print("cursor mode",2,2,1)
    elseif current_player_index == 1 then
@@ -583,6 +590,20 @@ function _draw()
    else
       print("current player: puff",2,2,1)
    end
+
+   print("x"..#cupcakes,118,4,1)
+end
+
+function _draw()
+   cls()
+   rectfill(-4,0,127,127,12)   
+   map(0,0,4,0,16,16)
+   foreach(tiles,draw_actor)
+   foreach(cupcakes,draw_actor)
+   foreach(players,draw_actor)
+   foreach(ui,draw_actor)
+
+   draw_ui()
 end
 -->8
 -- tween
