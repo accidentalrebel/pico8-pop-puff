@@ -13,10 +13,12 @@ board_pad_x = 4.5
 board_pad_y = 5
 slide_speed = 0.2
 current_player_index = 1
+moves_left = 3
 
 tile_highlight = nil
 char_highlight = nil
 cupcake_counter_label = nil
+moves_left_label = nil
 is_highlight_mode = false
 has_switched_player = false
 tiles = {}
@@ -109,6 +111,7 @@ function _init()
    add(ui,a)
 
    cupcake_counter_label = make_ui_label("x"..#cupcakes,118,4)
+   moves_left_label = make_ui_label(moves_left.." moves left",41,4)
 end
 
 function make_ui_label(text,x,y)
@@ -519,6 +522,9 @@ function control_player(player_num,dx,dy)
       end
    end
    if can_move_to_tile(a,t) then
+      moves_left -= 1
+      moves_left_label.text = moves_left.." moves left"
+      
       a.is_traveling = true
       has_switched_player = false
       slide_to_tile(a,t.col,t.row)
