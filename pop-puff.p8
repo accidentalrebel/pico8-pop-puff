@@ -597,9 +597,11 @@ function _update()
       if is_highlight_mode then
 	 is_highlight_mode = false
 	 tile_highlight.visible = false
+	 char_highlight.visible = true
       else
 	 is_highlight_mode = true
 	 tile_highlight.visible = true
+	 char_highlight.visible = false
       end
    elseif btnp(5) then
       if is_highlight_mode then
