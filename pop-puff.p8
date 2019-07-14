@@ -39,6 +39,8 @@ _highlight="highlight"
 _switch="switch"
 _ui_label="ui_label"
 
+_spr_pop=1
+_spr_puff=2
 _spr_cupcake=7
 _spr_arrow=3
 _spr_arrow_p=19
@@ -62,17 +64,11 @@ function _init()
       end
    end
 
-   make_cupcake(3,1)
-
    make_player(_pop,3,2)
    make_player(_puff,3,3)
 
-
-   -- a = make_actor(_cake,8,8,0,-1,1,1,_spr_cupcake)
-   -- attach(a,get_tile_at(1,4))
-   -- add(tiles,a)
-   -- make_tween(a,_x,(5+board_pad_x)*8,0.02)
-   -- make_tween(a,_y,(1+board_pad_y)*8,0.02)
+   make_cupcake(3,1)
+   make_cupcake(3,5)
 
    make_arrow(_arrow_p,_right,1,3)
    make_arrow(_arrow_p,_left,5,3)
@@ -91,12 +87,16 @@ function _init()
    -- attach(a,get_tile_at(2,2))
    -- add(tiles,a)
    
-   highlight = make_highlight()
+   highlight = make_highlight(2,2)
 
-   a=make_actor("cupcake_ui",108,2,0,0,0,0,_spr_cupcake)
+   a=make_actor("ui_cupcake",108,2,0,0,0,0,_spr_cupcake)
+   add(ui,a)
+   a=make_actor("ui_pop",4,4,0,0,0,0,_spr_pop)
+   add(ui,a)
+   a=make_actor("ui_puff",16,4,0,0,0,0,_spr_puff)
    add(ui,a)
 
-   cupcake_counter_label = make_ui_label("x1",118,4)
+   cupcake_counter_label = make_ui_label("x"..#cupcakes,118,4)
 end
 
 function make_ui_label(text,x,y)
@@ -157,9 +157,9 @@ end
 function make_player(id,col,row)
    local sprite = nil
    if id == _pop then
-      sprite = 1
+      sprite = _spr_pop
    else
-      sprite = 2
+      sprite = _spr_puff
    end
    local a = make_actor(id,0,0,0,-1,col,row,sprite)
    add(players,a)
@@ -198,12 +198,12 @@ function add_switch_slave(switch,col,row)
    add(switch.slaves,slave)
 end
 
-function make_highlight()
+function make_highlight(x_offset,y_offset)
    local highlight = make_actor(_highlight,8,8,1,1,0,0,0)
-   highlight.top_left = make_actor(_highlight,8,8,1,1,0,0,_spr_highlight)
-   highlight.top_right = make_actor(_highlight,8,8,1,1,0,0,_spr_highlight+1)
-   highlight.bottom_right = make_actor(_highlight,8,8,1,1,0,0,_spr_highlight+2)
-   highlight.bottom_left = make_actor(_highlight,8,8,1,1,0,0,_spr_highlight+3)
+   highlight.top_left = make_actor(_highlight,8,8,-x_offset,-y_offset,0,0,_spr_highlight)
+   highlight.top_right = make_actor(_highlight,8,8,x_offset+1,-y_offset,0,0,_spr_highlight+1)
+   highlight.bottom_right = make_actor(_highlight,8,8,x_offset+1,x_offset+1,0,0,_spr_highlight+2)
+   highlight.bottom_left = make_actor(_highlight,8,8,-x_offset,x_offset+1,0,0,_spr_highlight+3)
    add(ui,highlight)
    attach(highlight,get_tile_at(3,3))
 
@@ -589,13 +589,13 @@ function draw_highlight(c)
       return
    end
 
-   local sx = c.x+c.x_offset
-   local sy = c.y+c.y_offset
+   local sx = c.x
+   local sy = c.y
    
-   spr(c.top_left.spr, sx-3, sy-3)
-   spr(c.top_right.spr, sx+2, sy-3)
-   spr(c.bottom_right.spr, sx+2, sy+2)
-   spr(c.bottom_left.spr, sx-3, sy+2)
+   spr(c.top_left.spr, c.x + c.top_left.x_offset, c.y + c.top_left.y_offset)
+   spr(c.top_right.spr, c.x + c.top_right.x_offset, c.y + c.top_right.y_offset)
+   spr(c.bottom_right.spr, c.x + c.bottom_right.x_offset, c.y + c.bottom_right.y_offset)
+   spr(c.bottom_left.spr, c.x + c.bottom_left.x_offset, c.y + c.bottom_left.y_offset)
 end
 
 function draw_ui(ui)
