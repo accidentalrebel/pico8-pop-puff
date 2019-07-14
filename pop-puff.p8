@@ -14,7 +14,8 @@ board_pad_y = 5
 slide_speed = 0.2
 current_player_index = 1
 
-highlight = nil
+tile_highlight = nil
+char_highlight = nil
 cupcake_counter_label = nil
 is_highlight_mode = false
 tiles = {}
@@ -87,7 +88,8 @@ function _init()
    -- attach(a,get_tile_at(2,2))
    -- add(tiles,a)
    
-   highlight = make_highlight(2,2)
+   tile_highlight = make_highlight(2,2,3,3)
+   tile_highlight.visible = false
 
    a=make_actor("ui_cupcake",108,2,0,0,0,0,_spr_cupcake)
    add(ui,a)
@@ -95,6 +97,10 @@ function _init()
    add(ui,a)
    a=make_actor("ui_puff",16,4,0,0,0,0,_spr_puff)
    add(ui,a)
+
+   char_highlight = make_highlight(3,3)
+   char_highlight.x = 4
+   char_highlight.y = 4
 
    cupcake_counter_label = make_ui_label("x"..#cupcakes,118,4)
 end
@@ -198,16 +204,17 @@ function add_switch_slave(switch,col,row)
    add(switch.slaves,slave)
 end
 
-function make_highlight(x_offset,y_offset)
+function make_highlight(x_offset,y_offset,col,row)
    local highlight = make_actor(_highlight,8,8,1,1,0,0,0)
    highlight.top_left = make_actor(_highlight,8,8,-x_offset,-y_offset,0,0,_spr_highlight)
    highlight.top_right = make_actor(_highlight,8,8,x_offset+1,-y_offset,0,0,_spr_highlight+1)
    highlight.bottom_right = make_actor(_highlight,8,8,x_offset+1,x_offset+1,0,0,_spr_highlight+2)
    highlight.bottom_left = make_actor(_highlight,8,8,-x_offset,x_offset+1,0,0,_spr_highlight+3)
    add(ui,highlight)
-   attach(highlight,get_tile_at(3,3))
+   if col != nil and row != nil then
+      attach(highlight,get_tile_at(col,row))
+   end
 
-   highlight.visible = false
    highlight.on_draw = draw_highlight
    return highlight
 end
@@ -506,7 +513,7 @@ function handle_tween(tween)
 end
 
 function control_highlight(dx,dy)
-   slide_to_tile(highlight,highlight.col+dx,highlight.row+dy)
+   slide_to_tile(tile_highlight,tile_highlight.col+dx,tile_highlight.row+dy)
 end
 
 function rotate_arrow(arrow)
@@ -556,14 +563,14 @@ function _update()
    elseif btnp(4) then
       if is_highlight_mode then
 	 is_highlight_mode = false
-	 highlight.visible = false
+	 tile_highlight.visible = false
       else
 	 is_highlight_mode = true
-	 highlight.visible = true
+	 tile_highlight.visible = true
       end
    elseif btnp(5) then
       if is_highlight_mode then
-	 local tile = get_tile_at(highlight.col,highlight.row)
+	 local tile = get_tile_at(tile_highlight.col,tile_highlight.row)
 	 local child = get_child_of_type(tile,{_arrow,_arrow_p})
 	 if child != nil then
 	    rotate_arrow(child)
@@ -613,13 +620,13 @@ function _draw()
    foreach(players,draw_actor)
    foreach(ui,draw_actor)
 
-   if is_highlight_mode then
-      print("cursor mode",2,2,1)
-   elseif current_player_index == 1 then
-      print("current player: pop",2,2,1)
-   else
-      print("current player: puff",2,2,1)
-   end
+   -- if is_highlight_mode then
+   --    print("cursor mode",2,2,1)
+   -- elseif current_player_index == 1 then
+   --    print("current player: pop",2,2,1)
+   -- else
+   --    print("current player: puff",2,2,1)
+   -- end
 end
 -->8
 -- tween
