@@ -606,6 +606,9 @@ function _update()
 	 control_player(current_player_index,0,1)
       end
    elseif btnp(4) then
+      if is_anyone_traveling() then
+	 return
+      end
       if is_highlight_mode then
 	 is_highlight_mode = false
 	 tile_highlight.visible = false
