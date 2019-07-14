@@ -303,16 +303,26 @@ function on_arrow_stepped(arrow,stepper)
    end
 end
 
+function switch_to_next_player()
+   local current_player = players[current_player_index]
+   current_player_index += 1
+   if current_player_index > 2 then
+      current_player_index = 1
+   end
+
+   if current_player_index == 1 then
+      char_highlight.x = 4
+   else
+      char_highlight.x = 16
+   end
+end
+
 function on_reached_destination(obj)
    if obj.tag == _pop or obj.tag == _puff then
       obj.is_traveling = false
 
-      local current_player = players[current_player_index]
       if obj.tag == players[current_player_index].tag then
-	 current_player_index += 1
-	 if current_player_index > 2 then
-	    current_player_index = 1
-	 end
+	 switch_to_next_player()
       end
    end
 end
