@@ -23,7 +23,7 @@ tiles = {}
 cupcakes = {}
 players = {}
 tweens = {}
-tpool = {}
+pool = {}
 ui = {}
 
 -- enums
@@ -73,8 +73,8 @@ function _init()
    make_cupcake(3,1)
    make_cupcake(3,5)
 
-   make_arrow(_arrow_p,_right,1,3)
-   make_arrow(_arrow_p,_left,5,3)
+   -- make_arrow(_arrow_p,_right,1,3)
+   -- make_arrow(_arrow_p,_left,5,3)
    -- make_arrow(_arrow,_down,5,3)
    -- make_arrow(_arrow_p,_up,4,5)
    -- make_arrow(_arrow,_up,1,5)
@@ -298,6 +298,7 @@ function on_arrow_stepped(arrow,stepper)
    stepper.pointing = arrow.pointing
 
    local next_tile=get_next_tile(stepper,stepper.pointing)
+   stepper.is_traveling = true
    slide_to_tile(stepper, next_tile.col, next_tile.row)
    
    if arrow.type == _arrow then
@@ -325,9 +326,8 @@ end
 
 function on_reached_destination(obj)
    if obj.tag == _pop or obj.tag == _puff then
-      obj.is_traveling = false
-
       if obj.tag == players[current_player_index].tag then
+	 obj.is_traveling = false
 	 switch_to_next_player()
       end
    end
@@ -336,6 +336,7 @@ end
 function continue_sliding(slider)
    local next_tile=get_next_tile(slider,slider.pointing)
    if next_tile != nil and can_move_to_tile(slider,next_tile) then
+      slider.is_traveling = true
       slide_to_tile(slider,next_tile.col,next_tile.row)
    else
       on_reached_destination(slider)
@@ -455,6 +456,7 @@ function slide_to_tile(a,col,row)
       if child != nil then
 	 local t = get_next_tile(child,get_direction(a,child))
 	 child.pointing = a.pointing
+	 child.is_traveling = true
 	 slide_to_tile(child,t.col,t.row)
 
 	 a.stop_on_next_tile = true
@@ -462,11 +464,25 @@ function slide_to_tile(a,col,row)
    end
 end
 
+function is_anyone_traveling()
+   for obj in all(players) do
+      if obj.is_traveling then
+	 return true
+      end
+   end
+   for obj in all(tiles) do
+      if obj.is_traveling then
+	 return true
+      end
+   end
+   return false
+end
+
 function control_player(player_num,dx,dy)
    dx = dx or 0
    dy = dy or 0
    local a = players[player_num]
-   if a.is_traveling then
+   if is_anyone_traveling() or a.is_traveling then
       return
    end
    
@@ -687,7 +703,7 @@ function tween_handle_reached(tween)
       to_check = tween.obj.y
    end
    if (tween.direction > 0 
-	  and to_check >=  tween.target) 
+	  and to_check >= tween.target) 
       or (tween.direction < 0	
 	     and to_check <= tween.target)
    then
