@@ -49,7 +49,8 @@ _spr_arrow_p=19
 _spr_box=45
 _spr_hole=46
 _spr_switch=47
-_spr_highlight=64
+_spr_tile_highlight=64
+_spr_char_highlight=80
 
 _up=1
 _right=2
@@ -89,8 +90,12 @@ function _init()
    -- attach(a,get_tile_at(2,2))
    -- add(tiles,a)
    
-   tile_highlight = make_highlight(2,2,3,3)
+   tile_highlight = make_highlight(2,3,2,3,_spr_tile_highlight,3,3)
    tile_highlight.visible = false
+
+   char_highlight = make_highlight(3,3,3,3,_spr_char_highlight)
+   char_highlight.x = 4
+   char_highlight.y = 4
 
    a=make_actor("ui_cupcake",108,2,0,0,0,0,_spr_cupcake)
    add(ui,a)
@@ -98,10 +103,6 @@ function _init()
    add(ui,a)
    a=make_actor("ui_puff",16,4,0,0,0,0,_spr_puff)
    add(ui,a)
-
-   char_highlight = make_highlight(3,3)
-   char_highlight.x = 4
-   char_highlight.y = 4
 
    cupcake_counter_label = make_ui_label("x"..#cupcakes,118,4)
 end
@@ -205,12 +206,12 @@ function add_switch_slave(switch,col,row)
    add(switch.slaves,slave)
 end
 
-function make_highlight(x_offset,y_offset,col,row)
+function make_highlight(x_offset_left,x_offset_right,y_offset_up,y_offset_down,sprite,col,row)
    local highlight = make_actor(_highlight,8,8,1,1,0,0,0)
-   highlight.top_left = make_actor(_highlight,8,8,-x_offset,-y_offset,0,0,_spr_highlight)
-   highlight.top_right = make_actor(_highlight,8,8,x_offset+1,-y_offset,0,0,_spr_highlight+1)
-   highlight.bottom_right = make_actor(_highlight,8,8,x_offset+1,x_offset+1,0,0,_spr_highlight+2)
-   highlight.bottom_left = make_actor(_highlight,8,8,-x_offset,x_offset+1,0,0,_spr_highlight+3)
+   highlight.top_left = make_actor(_highlight,8,8,-x_offset_left,-y_offset_up,0,0,sprite)
+   highlight.top_right = make_actor(_highlight,8,8,x_offset_right,-y_offset_up,0,0,sprite+1)
+   highlight.bottom_right = make_actor(_highlight,8,8,x_offset_right,y_offset_down,0,0,sprite+2)
+   highlight.bottom_left = make_actor(_highlight,8,8,-x_offset_left,y_offset_down,0,0,sprite+3)
    add(ui,highlight)
    if col != nil and row != nil then
       attach(highlight,get_tile_at(col,row))
@@ -755,6 +756,14 @@ __gfx__
 0a000000000000a000000aa00aa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0a000000000000a0aaaaaaa00aaaaaaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0a000000000000a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000dddddda00adddddd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0aaaaaaaaaaaaaa0dddddda00adddddd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0aaddddddddddaa0dddddda00adddddd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0adddddddddddda0dddddda00adddddd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0adddddddddddda0dddddda00adddddd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0adddddddddddda0dddddaa00aaddddd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0adddddddddddda0aaaaaaa00aaaaaaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0adddddddddddda00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __label__
 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 88888ffffff882222228888888888888888888888888888888888888888888888888888888888888888228228888ff88ff888222822888888822888888228888
