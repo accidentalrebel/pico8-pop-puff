@@ -46,7 +46,7 @@ def convert_map_data(map_data):
             first = int(first)
         
         if first > 0:
-            string += str(first)
+            string += str(alpha_array[first + 15])
 
         second = data[1]
         second = char_array.index(second.upper())
@@ -64,7 +64,7 @@ def convert_map_data(map_data):
     
     return
 
-for file_index in range(1,6):
+for file_index in range(1,7):
     map_string = open_file('00' + str(file_index))
     if map_string == '':
         sys.exit()
