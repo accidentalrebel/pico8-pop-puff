@@ -1,0 +1,10 @@
+0,v,0,<,-,
+-,-,-,^,F,
+-,0,-,P,-,
+-,-,-,-,-,
+-,>,0,<,-,
+Pop and Puff can push each other,
+2,
+1/10 - 2/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Pushing practice

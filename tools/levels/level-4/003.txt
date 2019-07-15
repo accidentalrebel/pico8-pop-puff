@@ -1,0 +1,10 @@
+--,--,-0,--,--,
+--,--,-v,--,-<,
+->,-0,-P,-0,-^,
+-^,--,-^,--,--,
+--,--,-!,--,-F,
+Perma arrows don't disappear when stepped on.,
+1,
+3/10 - 2/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Basic puzzle 

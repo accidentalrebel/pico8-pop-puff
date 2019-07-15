@@ -1,0 +1,10 @@
+-0,-x,1v,-x,-0,
+1>,-0,2S,-0,1V,
+2^,--,1S,--,2<,
+-0,-P,1^,-F,-^,
+->,--,->,--,-<,
+Touch and hold a switch to highlight linked arrows,
+3, 
+7/10 - 8/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+R3:1-L MF-L R1:5-U MP-R R5:5-U MF-D

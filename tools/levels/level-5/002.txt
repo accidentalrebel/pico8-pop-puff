@@ -1,0 +1,9 @@
+--,--,--,--,--,
+1!,-0,1s,-F,-<, 
+--,--,--,--,-0,
+-^,--,--,-P,-<,
+-0,--,--,--,--,
+Step on switches to rotate certain arrows,
+1,
+2/10 - 4/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel  

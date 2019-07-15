@@ -1,0 +1,10 @@
+0,>,v,>,v,
+F,^,0,^,-,
+-,^,0,^,-,
+-,^,0,^,P,
+>,^,>,^,0,
+,
+2,
+4/10 - 5/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Normal puzzle 

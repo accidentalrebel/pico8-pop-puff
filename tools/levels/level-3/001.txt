@@ -1,0 +1,9 @@
+-,-,F,-,-,
+-,v,-,0,P,
+v,>,0,B,^,
+0,-,-,-,-,
+x,B,^,-,-,
+Stay away from holes!,
+2,
+1/10 - 4/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel

@@ -1,0 +1,9 @@
+--,--,-0,--,--,
+-F,--,-P,--,-v,
+--,-0,->,-0,1;,
+--,--,-0,--,1s,
+-^,-0,1!,-0,-<,
+Touch and hold a switch to highlight linked arrows,
+2,
+3/10 - 4/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel

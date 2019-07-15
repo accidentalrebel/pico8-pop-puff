@@ -1,0 +1,10 @@
+>,0,0,0,0,
+-,-,-,-,-,
+P,-,-,F,v,
+B,-,-,-,B,
+^,B,^,B,<,
+Boxes can only be move to one tile,
+1,
+1/10 - 3/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Teaches that boxes can push boxes  

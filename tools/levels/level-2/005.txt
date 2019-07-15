@@ -1,0 +1,10 @@
+-,v,0,0,<,
+-,-,-,-,-,
+F,B,-,-,v,
+-,-,-,-,0,
+-,P,0,0,<,
+You can use boxes to position characters,
+2,
+1/10 - 0/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Teaches pushing boxes only moves one tile    

@@ -1,0 +1,10 @@
+-v,->,-x,--,-<,
+--,-B,-0,-<,-^,
+--,-0,--,-0,-0,
+--,--,--,--,-0,
+-^,-P,-F,->,-^,
+,
+3,
+7/10 - 7/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+R4:5-U MF-R R2:1-L MP-U R5:1-D MF-R

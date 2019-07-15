@@ -1,0 +1,10 @@
+-,-,-,-,-,
+-,F,^,v,-,
+0,-,-,0,-,
+v,-,-,-,P,
+-,-,-,-,-,
+Tap an arrow tile to rotate it,
+2,
+0/10 - 0/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Teaches how to rotate

@@ -1,0 +1,10 @@
+-P,--,-x,--,-0,
+-v,->,-;,->,-v,
+--,-^,-v,-^,--,
+->,-^,-],-^,-v,
+-F,--,-x,--,-0,
+,
+2,
+4/10 - 7/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Basic puzzle  

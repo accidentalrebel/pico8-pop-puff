@@ -1,0 +1,10 @@
+v,0,-,0,<,
+-,-,P,-,0,
+0,-,B,-,0,
+^,-,B,-,^,
+^,-,<,F,-,
+Some arrows point in the wrong direction,
+2, 
+5/10 - 8/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Bsaic puzzle  

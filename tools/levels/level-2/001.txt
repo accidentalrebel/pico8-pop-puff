@@ -1,0 +1,10 @@
+-,v,0,0,<,
+>,B,-,-,v,
+-,-,-,-,-,
+^,0,F,-,P,
+-,>,-,-,0,
+Boxes will only move one tile when pushed,
+2,
+1/10 - 2/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Teaches pushing box only moves one tile  

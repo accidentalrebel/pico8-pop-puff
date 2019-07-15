@@ -1,0 +1,10 @@
+-x,-F,-x,--,--,
+-x,->,-B,-P,--,
+--,--,-0,--,--,
+--,--,-0,--,--,
+--,-x,-^,-<,-<,
+,
+2, 
+2/10 - 3/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Hole  

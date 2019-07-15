@@ -1,0 +1,10 @@
+;,[,-,-,-,
+],B,0,0,0,
+x,-,-,-,-,
+0,F,-,-,-,
+P,-,-,-,-,
+Perma arrows don't disappear when stepped on.,
+2,
+1/10 - 1/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Basic puzzle 

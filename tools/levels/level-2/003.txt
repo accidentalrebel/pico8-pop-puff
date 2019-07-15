@@ -1,0 +1,10 @@
+-,-,-,0,-,
+v,0,^,-,-,
+0,-,P,B,<,
+-,-,>,^,-,
+-,-,-,-,F,
+Thinking one move ahead helps,
+2,
+4/10 - 6/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Basic puzzle  

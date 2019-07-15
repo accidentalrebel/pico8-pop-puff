@@ -40,7 +40,7 @@ def convert_map_data(map_data):
             break
         
         first = data[0]
-        if first == '-':
+        if first == '-' or first == ' ':
             first = 0
         else:
             first = int(first)
@@ -64,14 +64,14 @@ def convert_map_data(map_data):
     
     return
 
-for file_index in range(1,7):
-    map_string = open_file('00' + str(file_index))
+for file_index in range(1,21):
+    map_string = open_file('levels/level-1/' + str('{:03d}'.format(file_index)))
     if map_string == '':
         sys.exit()
 
     map_data = map_string.split(',')
     map_data = pad_map_data(map_data)
 
-    print(str(map_data))
+    print('\n' + str(file_index) + ': ' + str(map_data))
 
     convert_map_data(map_data)

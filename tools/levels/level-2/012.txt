@@ -1,0 +1,10 @@
+v,<,>,0,<,
+>,B,P,0,0,
+-,-,-,-,-,
+F,^,0,-,-,
+-,>,^,-,-,
+Don't let boxes squish any cupcakes!,
+1,
+4/10 - 4/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Basic puzzle  

@@ -1,0 +1,9 @@
+0,-,-,F,-,
+0,-,-,-,P,
+0,-,-,-,-,
+x,B,>,<,<,
+>,0,-,-,^,
+You can use boxes to cover up holes!,
+2,
+2/10 - 3/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel

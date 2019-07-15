@@ -1,0 +1,10 @@
+v,v,v,v,<,
+>,B,B,B,^,
+-,-,P,-,-,
+v,-,F,-,v,
+0,0,0,<,-,
+Boxes can push other boxes, 
+2,
+7/10 - 8/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Basic puzzle  
