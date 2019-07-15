@@ -1,4 +1,4 @@
-char_array = [ '-', '0', 'P', 'F', 'B', '^', '>', 'v', '<', 's', '!', ']', ';', '[', 'x' ]
+char_array = [ '-', '0', 'P', 'F', 'B', '^', '>', 'V', '<', 'S', '!', ']', ';', '[', 'X' ]
 alpha_array = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ]
 
 def open_file(level_string):
@@ -49,7 +49,7 @@ def convert_map_data(map_data):
             string += str(first)
 
         second = data[1]
-        second = char_array.index(second)
+        second = char_array.index(second.upper())
 
         if second == 0:
             a_count += 1
@@ -64,13 +64,14 @@ def convert_map_data(map_data):
     
     return
 
-map_string = open_file('test-1')
-if map_string == '':
-    sys.exit()
-        
-map_data = map_string.split(',')
-map_data = pad_map_data(map_data)
+for file_index in range(1,6):
+    map_string = open_file('00' + str(file_index))
+    if map_string == '':
+        sys.exit()
 
-print(str(map_data))
+    map_data = map_string.split(',')
+    map_data = pad_map_data(map_data)
 
-convert_map_data(map_data)
+    print(str(map_data))
+
+    convert_map_data(map_data)
