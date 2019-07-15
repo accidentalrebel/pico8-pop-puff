@@ -1,9 +1,12 @@
+import sys
+import os.path
+
 char_array = [ '-', '0', 'P', 'F', 'B', '^', '>', 'V', '<', 'S', '!', ']', ';', '[', 'X' ]
 alpha_array = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ]
 
 def open_file(level_string):
     map_string = ''
-    with open(level_string + '.txt','r') as f:
+    with open(level_string,'r') as f:
         lines = []
         line = f.readline()
         lines_count = 0
@@ -65,7 +68,12 @@ def convert_map_data(map_data):
     return
 
 for file_index in range(1,21):
-    map_string = open_file('levels/level-1/' + str('{:03d}'.format(file_index)))
+    path = 'levels/level-' + sys.argv[1] + '/' + str('{:03d}'.format(file_index)) + '.txt'
+    if not os.path.isfile(path):
+        print('Cannot find path: ' + path + '. Exiting...')
+        sys.exit()
+        
+    map_string = open_file(path)
     if map_string == '':
         sys.exit()
 
