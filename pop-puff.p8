@@ -306,13 +306,17 @@ function on_arrow_stepped(arrow,stepper)
    
    stepper.pointing = arrow.pointing
 
-   local next_tile=get_next_tile(stepper,stepper.pointing)
-   stepper.is_traveling = true
-   slide_to_tile(stepper, next_tile.col, next_tile.row)
-   
    if arrow.type == _arrow then
       pool(arrow)
    end
+
+   local next_tile = get_next_tile(stepper,stepper.pointing)
+   if next_tile == nil then
+      on_reached_destination(stepper)
+      return
+   end
+   stepper.is_traveling = true
+   slide_to_tile(stepper, next_tile.col, next_tile.row)
 end
 
 function switch_to_next_player()
