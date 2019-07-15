@@ -1,0 +1,10 @@
+F,-,-,v,-,
+-,>,-,-,-,
+-,0,-,0,-,
+-,-,-,<,-,
+-,^,-,-,P,
+Hold and swipe a character to move,
+2,
+0/10 - 0/10 stars,
+Karlo, http://www.twitter.com/accidentalrebel,
+Teaches movement
