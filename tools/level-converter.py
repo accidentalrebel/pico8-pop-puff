@@ -147,8 +147,9 @@ def compress_map_data(map_data):
     string = ''
     count = 0
     for i in range(len(map_data)+1):
-        if i >= len(map_data) and count > 0:
-            string += str(alpha_array[count+15])
+        if i >= len(map_data):
+            if count > 0:
+                string += str(alpha_array[count+15])
             break
             
         current_char = map_data[i]
@@ -168,7 +169,18 @@ def compress_map_data(map_data):
     return string
 
 def decompress_map_data(map_data):
-    print("here")
+    string = ''
+    for i in range(len(map_data)):
+        current_char = map_data[i]
+        index = alpha_array.index(current_char)
+        if index >= 15:
+            for j in range(index - 15):
+                string += 'A'
+        else:
+            string += current_char
+
+    print('Decompressed: (' + str(len(string)) + '): ' + string)
+    return string
 
 for file_index in range(1,21):
     path = 'levels/level-' + sys.argv[1] + '/' + str('{:03d}'.format(file_index)) + '.txt'
@@ -181,7 +193,7 @@ for file_index in range(1,21):
     # test
     #map_string = '-^,->,--,--,1v,-v'
     #map_string = '--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,-v'
-    map_string = '--,-v,--,--,--,--'
+    #map_string = '--,-v,--,--,--,--'
     # end_test
     
     if map_string == '':
