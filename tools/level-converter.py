@@ -23,6 +23,8 @@ def open_file(level_string):
             map_string += line.replace('\n','')
             current_count += 1
 
+        f.close()
+
     return map_string
 
 def pad_map_data(map_data):
@@ -64,6 +66,10 @@ def convert_map_data(map_data):
             a_count = 0
 
     print(string)
+
+    # with open('result.txt','a+') as f:
+    #     f.write(string + '\n')
+    #     f.close()
     
     return
 
@@ -80,6 +86,14 @@ for file_index in range(1,21):
     map_data = map_string.split(',')
     map_data = pad_map_data(map_data)
 
-    print('\n' + str(file_index) + ': ' + str(map_data))
+    non_compressed_string = ''
+    for data in map_data:
+        non_compressed_string += data
+    
+    print('\n' + str(file_index) + ': ' + str(non_compressed_string))
 
-    convert_map_data(map_data)
+    # with open('result.txt','a+') as f:
+    #     f.write(non_compressed_string + '\n')
+    #     f.close()
+
+    # convert_map_data(map_data)
