@@ -185,10 +185,24 @@ def decompress_map_data(map_data):
 
 def devert_map_data(map_data):
     string = ''
-    for data in map_data:
-        string += '*'
+    was_digit = False
+    for i in range(len(map_data)):
+        data = map_data[i]
+        if data.isdigit():
+            string += str(data)
+            was_digit = True
+        else:
+            if not was_digit:
+                string += '-'
+                
+            index = alpha_array.index(data)
+            current_char = char_array[index]
+            
+            string += current_char
+            was_digit = False
         
     print('Deverted (' + str(len(string)) + '):\t\t' + string)
+    return string
 
 for file_index in range(1,21):
     path = 'levels/level-' + sys.argv[1] + '/' + str('{:03d}'.format(file_index)) + '.txt'
@@ -199,9 +213,9 @@ for file_index in range(1,21):
     map_string = open_file(path)
 
     # test
-    #map_string = '-^,->,--,--,1v,-v'
-    #map_string = '--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,-v'
-    #map_string = '--,-v,--,--,--,--'
+    # map_string = '-^,->,--,--,1v,-v'
+    # map_string = '--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,-v'
+    # map_string = '--,-v,--,--,--,--'
     # end_test
     
     if map_string == '':
@@ -212,7 +226,7 @@ for file_index in range(1,21):
 
     non_compressed_string = ''
     for data in map_data:
-        non_compressed_string += data
+        non_compressed_string += data.upper()
 
     print('\nMap ' + str(file_index) + ' string:\t\t' + str(non_compressed_string))
 
@@ -227,6 +241,9 @@ for file_index in range(1,21):
 
     map_data = decompress_map_data(map_data)
     map_data = devert_map_data(map_data)
+
+    if non_compressed_string != map_data:
+        raise Exception('Inconsistent conversion results!!!')
 
     print('============================================')
     print('Conversion savings:\t' + str((1 - (converted_len / original_len)) * 100) + '%')
