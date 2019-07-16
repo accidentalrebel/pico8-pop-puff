@@ -37,7 +37,7 @@ def pad_map_data(map_data):
 
     return map_data
 
-def convert_map_data(map_data):
+def convert_to_num_representations(map_data):
     string = ''
     a_count = 0
     for data in map_data:
@@ -45,27 +45,56 @@ def convert_map_data(map_data):
             break
         
         first = data[0]
-        if first == '-' or first == ' ':
-            first = 0
+        if first == ' ':
+            first = '-'
+
+        if first == '-':
+            first = char_array.index(first)
         else:
             first = int(first)
         
-        if first > 0:
-            string += str(alpha_array[first + 15])
+        second = char_array.index(data[1].upper())
+        
+        string += str(first) + str(second)
+        
+    print('Number representation: ' + string)
 
-        second = data[1]
-        second = char_array.index(second.upper())
+    # with open('result.txt','a+') as f:
+    #     f.write(string + '\n')
+    #     f.close()
+    
+    return string
 
-        if second == 0:
-            a_count += 1
+def convert_map_data(map_data):
+    string = ''
+    a_count = 0
+    byte_index = 0
+    for data in map_data:
+        if data == None or len(data) <= 0:
+            break
+
+        if byte_index == 0:
+            first = int(data)
+            if first > 0:
+                string += str(alpha_array[first + 15])
+
+            byte_index += 1
         else:
-            if a_count > 0:
-                string += str(a_count)
-                
-            string += alpha_array[second]
-            a_count = 0
+            second = int(data)
 
-    print(string)
+            if second == 0:
+                a_count += 1
+            else:
+                if a_count > 0:
+                    string += str(a_count)
+
+                string += alpha_array[second]
+                a_count = 0
+
+            byte_index = 0
+        
+
+    print('Compressed: ' + string)
 
     # with open('result.txt','a+') as f:
     #     f.write(string + '\n')
@@ -90,10 +119,7 @@ for file_index in range(1,21):
     for data in map_data:
         non_compressed_string += data
     
-    print('\n' + str(file_index) + ': ' + str(non_compressed_string))
+    print('\nMap ' + str(file_index) + ' string: ' + str(non_compressed_string))
 
-    # with open('result.txt','a+') as f:
-    #     f.write(non_compressed_string + '\n')
-    #     f.close()
-
-    # convert_map_data(map_data)
+    map_data = convert_to_num_representations(map_data)
+    convert_map_data(map_data)
