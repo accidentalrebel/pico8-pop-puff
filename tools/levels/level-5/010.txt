@@ -1,7 +1,7 @@
 --,--,-P,--,1S,
 1>,--,--,--,-B,
 -0,-x,-<,--,--,
--v,--,-F,--,-B, 
+-v,--,-F,--,-B,
 -x,--,-^,--,-^,
 Touch and hold a switch to highlight linked arrows,
 3,

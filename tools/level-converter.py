@@ -1,7 +1,7 @@
 import sys
 import os.path
 
-char_array = [ '-', '0', 'P', 'F', 'B', '^', '>', 'V', '<', 'S', '!', ']', ';', '[', 'X' ]
+char_array =  [ '-', '0', 'P', 'F', 'B', '^', '>', 'V', '<', 'S', '!', ']', ';', '[', 'X' ]
 alpha_array = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ] 
 
 def open_file(level_string):
@@ -116,23 +116,20 @@ def lzw(uncompressed):
 
 def convert_map_data(map_data):
     string = ''
-    byte_index = 0
     for data in map_data:
         if data == None or len(data) <= 0:
             break
 
-        if byte_index == 0:
-            first = char_array.index(data[0].upper())
-            if first > 0:
-                string += str(first)
-
-            byte_index += 1
+        if data[0].isdigit():
+            first = int(data[0])
         else:
-            second = char_array.index(data[1].upper())
-            string += alpha_array[second]
+            first = char_array.index(data[0].upper())
 
-            byte_index = 0
-        
+        if first > 0:
+            string += str(first)
+
+        second = char_array.index(data[1].upper())
+        string += alpha_array[second]
 
     print('Converted (' + str(len(string)) + '):\t\t' + string)
 
@@ -172,6 +169,10 @@ def decompress_map_data(map_data):
     string = ''
     for i in range(len(map_data)):
         current_char = map_data[i]
+        if current_char.isdigit():
+            string += current_char
+            continue
+        
         index = alpha_array.index(current_char)
         if index >= 15:
             for j in range(index - 15):
@@ -216,7 +217,7 @@ for file_index in range(1,21):
     print('\nMap ' + str(file_index) + ' string:\t\t' + str(non_compressed_string))
 
     #map_data = convert_to_hex_representations(map_data)
-    original_len = len(map_data)
+    original_len = len(non_compressed_string)
     
     map_data = convert_map_data(map_data)
     converted_len = len(map_data)
