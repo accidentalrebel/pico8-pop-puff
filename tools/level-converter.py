@@ -57,7 +57,7 @@ def convert_to_hex_representations(map_data):
         
         string += str(first) + str(second)
         
-    print('Hex representation: ' + string)
+    print('Hex representation:\t' + string)
 
     # with open('result.txt','a+') as f:
     #     f.write(string + '\n')
@@ -134,7 +134,7 @@ def convert_map_data(map_data):
             byte_index = 0
         
 
-    print('Converted (' + str(len(string)) + '):' + string)
+    print('Converted (' + str(len(string)) + '):\t\t' + string)
 
     # with open('result.txt','a+') as f:
     #     f.write(string + '\n')
@@ -164,7 +164,7 @@ def compress_map_data(map_data):
                 count = 0
             string += current_char
 
-    print('Compressed (' + str(len(string)) + '): ' + string)
+    print('Compressed (' + str(len(string)) + '):\t' + string)
 
     return string
 
@@ -179,8 +179,15 @@ def decompress_map_data(map_data):
         else:
             string += current_char
 
-    print('Decompressed: (' + str(len(string)) + '): ' + string)
+    print('Decompressed: (' + str(len(string)) + '):\t' + string)
     return string
+
+def devert_map_data(map_data):
+    string = ''
+    for data in map_data:
+        string += '*'
+        
+    print('Deverted (' + str(len(string)) + '):\t\t' + string)
 
 for file_index in range(1,21):
     path = 'levels/level-' + sys.argv[1] + '/' + str('{:03d}'.format(file_index)) + '.txt'
@@ -217,13 +224,14 @@ for file_index in range(1,21):
     map_data = compress_map_data(map_data)
     compressed_len = len(map_data)
 
-    print('============================================')
-    print('Conversion savings: ' + str((1 - (converted_len / original_len)) * 100) + '%')
-    print('Compression savings: ' + str((1 - (compressed_len / converted_len)) * 100) + '%')
-    print('Total savings: ' + str((1 - (compressed_len / original_len)) * 100) + '%')
-    print('============================================')
-
     map_data = decompress_map_data(map_data)
+    map_data = devert_map_data(map_data)
+
+    print('============================================')
+    print('Conversion savings:\t' + str((1 - (converted_len / original_len)) * 100) + '%')
+    print('Compression savings:\t' + str((1 - (compressed_len / converted_len)) * 100) + '%')
+    print('Total savings:\t\t' + str((1 - (compressed_len / original_len)) * 100) + '%')
+    print('============================================')
 
     # compressed = lzw(map_data)
     # print('\LZW ' + str(len(compressed)) + ': ' + str(compressed))
