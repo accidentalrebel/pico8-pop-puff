@@ -146,7 +146,11 @@ def compress_map_data(map_data):
     prev_char = ''
     string = ''
     count = 0
-    for i in range(len(map_data)):
+    for i in range(len(map_data)+1):
+        if i >= len(map_data) and count > 0:
+            string += str(alpha_array[count+15])
+            break
+            
         current_char = map_data[i]
         if current_char == 'A':
             count += 1
@@ -163,6 +167,9 @@ def compress_map_data(map_data):
 
     return string
 
+def decompress_map_data(map_data):
+    print("here")
+
 for file_index in range(1,21):
     path = 'levels/level-' + sys.argv[1] + '/' + str('{:03d}'.format(file_index)) + '.txt'
     if not os.path.isfile(path):
@@ -174,6 +181,7 @@ for file_index in range(1,21):
     # test
     #map_string = '-^,->,--,--,1v,-v'
     #map_string = '--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,-v'
+    map_string = '--,-v,--,--,--,--'
     # end_test
     
     if map_string == '':
@@ -202,6 +210,8 @@ for file_index in range(1,21):
     print('Compression savings: ' + str((1 - (compressed_len / converted_len)) * 100) + '%')
     print('Total savings: ' + str((1 - (compressed_len / original_len)) * 100) + '%')
     print('============================================')
+
+    map_data = decompress_map_data(map_data)
 
     # compressed = lzw(map_data)
     # print('\LZW ' + str(len(compressed)) + ': ' + str(compressed))
