@@ -102,6 +102,54 @@ def convert_map_data(map_data):
     
     return
 
+def rle(input_string):
+    count = 1
+    prev = ''
+    lst = []
+    for character in input_string:
+        if character != prev:
+            if prev:
+                entry = (prev,count)
+                lst.append(entry)
+                #print lst
+            count = 1
+            prev = character
+        else:
+            count += 1
+    else:
+        try:
+            entry = (character,count)
+            lst.append(entry)
+            return (lst, 0)
+        except Exception as e:
+            print("Exception encountered {e}".format(e=e)) 
+            return (e, 1)
+
+def lzw(uncompressed):
+    """Compress a string to a list of output symbols."""
+ 
+    # Build the dictionary.
+    dict_size = 256
+    dictionary = {chr(i): i for i in range(dict_size)}
+ 
+    w = ""
+    result = []
+    for c in uncompressed:
+        wc = w + c
+        if wc in dictionary:
+            w = wc
+        else:
+            result.append(dictionary[w])
+            # Add wc to the dictionary.
+            dictionary[wc] = dict_size
+            dict_size += 1
+            w = c
+ 
+    # Output the code for w.
+    if w:
+        result.append(dictionary[w])
+    return result
+
 for file_index in range(1,21):
     path = 'levels/level-' + sys.argv[1] + '/' + str('{:03d}'.format(file_index)) + '.txt'
     if not os.path.isfile(path):
@@ -123,3 +171,14 @@ for file_index in range(1,21):
 
     map_data = convert_to_hex_representations(map_data)
     #convert_map_data(map_data)
+
+    compressed = lzw('07060e00080004010805000100010100000000010502030605')
+    print('\LZW ' + str(len(compressed)) + ': ' + str(compressed))
+
+    compressed = rle('07060e00080004010805000100010100000000010502030605')
+    if compressed[1] == 0:
+        print("RLE is {}".format(compressed[0]))
+
+    #print('\RLE ' + str(len(compressed)) + ': ' + str(compressed))
+
+    
