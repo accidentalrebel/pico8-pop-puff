@@ -134,7 +134,7 @@ def convert_map_data(map_data):
             byte_index = 0
         
 
-    print('Converted: ' + string)
+    print('Converted (' + str(len(string)) + '):' + string)
 
     # with open('result.txt','a+') as f:
     #     f.write(string + '\n')
@@ -159,7 +159,7 @@ def compress_map_data(map_data):
                 count = 0
             string += current_char
 
-    print('Compressed: ' + string)
+    print('Compressed (' + str(len(string)) + '): ' + string)
 
     return string
 
@@ -173,7 +173,7 @@ for file_index in range(1,21):
 
     # test
     #map_string = '-^,->,--,--,1v,-v'
-    map_string = '--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,-v'
+    #map_string = '--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,-v'
     # end_test
     
     if map_string == '':
@@ -189,15 +189,26 @@ for file_index in range(1,21):
     print('\nMap ' + str(file_index) + ' string: ' + str(non_compressed_string))
 
     map_data = convert_to_hex_representations(map_data)
+    original_len = len(map_data)
+    
     map_data = convert_map_data(map_data)
+    converted_len = len(map_data)
+    
     map_data = compress_map_data(map_data)
+    compressed_len = len(map_data)
+
+    print('============================================')
+    print('Conversion savings: ' + str((1 - (converted_len / original_len)) * 100) + '%')
+    print('Compression savings: ' + str((1 - (compressed_len / converted_len)) * 100) + '%')
+    print('Total savings: ' + str((1 - (compressed_len / original_len)) * 100) + '%')
+    print('============================================')
 
     # compressed = lzw(map_data)
     # print('\LZW ' + str(len(compressed)) + ': ' + str(compressed))
 
     # compressed = rle(map_data)
     # if compressed[1] == 0:
-    #     print("RLE is {}".format(compressed[0]))
+    #     print('RLE is {}'.format(compressed[0]))
     
 # -^->----1v-v
 # 050600001707
