@@ -2,7 +2,7 @@ import sys
 import os.path
 
 char_array = [ '-', '0', 'P', 'F', 'B', '^', '>', 'V', '<', 'S', '!', ']', ';', '[', 'X' ]
-alpha_array = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ]
+alpha_array = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ] 
 
 def open_file(level_string):
     map_string = ''
@@ -150,6 +150,9 @@ def compress_map_data(map_data):
         current_char = map_data[i]
         if current_char == 'A':
             count += 1
+            if count + 15 >= 25:
+                string += str(alpha_array[count+15])
+                count = 0
         else:
             if count > 0:
                 string += str(alpha_array[count+15])
@@ -169,7 +172,8 @@ for file_index in range(1,21):
     map_string = open_file(path)
 
     # test
-    # map_string = '-^,->,--,--,1v,-v'
+    #map_string = '-^,->,--,--,1v,-v'
+    map_string = '--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,-v'
     # end_test
     
     if map_string == '':
