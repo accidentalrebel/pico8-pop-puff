@@ -122,13 +122,13 @@ def convert_map_data(map_data):
             break
 
         if byte_index == 0:
-            first = int(data)
+            first = char_array.index(data[0].upper())
             if first > 0:
                 string += str(first)
 
             byte_index += 1
         else:
-            second = int(data,16)
+            second = char_array.index(data[1].upper())
             string += alpha_array[second]
 
             byte_index = 0
@@ -164,7 +164,7 @@ def compress_map_data(map_data):
                 count = 0
             string += current_char
 
-    print('Compressed (' + str(len(string)) + '):\t' + string)
+    print('Compressed (' + str(len(string)) + '): \t' + string)
 
     return string
 
@@ -215,7 +215,7 @@ for file_index in range(1,21):
 
     print('\nMap ' + str(file_index) + ' string:\t\t' + str(non_compressed_string))
 
-    map_data = convert_to_hex_representations(map_data)
+    #map_data = convert_to_hex_representations(map_data)
     original_len = len(map_data)
     
     map_data = convert_map_data(map_data)
