@@ -37,7 +37,7 @@ def pad_map_data(map_data):
 
     return map_data
 
-def convert_to_num_representations(map_data):
+def convert_to_hex_representations(map_data):
     string = ''
     a_count = 0
     for data in map_data:
@@ -51,9 +51,9 @@ def convert_to_num_representations(map_data):
         if first == '-':
             first = char_array.index(first)
         else:
-            first = int(first)
+            first = hex(int(first))[2:]
         
-        second = char_array.index(data[1].upper())
+        second = hex(char_array.index(data[1].upper()))[2:]
         
         string += str(first) + str(second)
         
@@ -121,5 +121,5 @@ for file_index in range(1,21):
     
     print('\nMap ' + str(file_index) + ' string: ' + str(non_compressed_string))
 
-    map_data = convert_to_num_representations(map_data)
-    convert_map_data(map_data)
+    map_data = convert_to_hex_representations(map_data)
+    #convert_map_data(map_data)
