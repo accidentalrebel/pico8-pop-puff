@@ -213,7 +213,7 @@ for file_index in range(1,21):
     for data in map_data:
         non_compressed_string += data
 
-    print('\nMap ' + str(file_index) + ' string: ' + str(non_compressed_string))
+    print('\nMap ' + str(file_index) + ' string:\t\t' + str(non_compressed_string))
 
     map_data = convert_to_hex_representations(map_data)
     original_len = len(map_data)
