@@ -43,7 +43,7 @@ def convert_to_hex_representations(map_data):
     for data in map_data:
         if data == None or len(data) <= 0:
             break
-        
+
         first = data[0]
         if first == ' ':
             first = '-'
@@ -52,12 +52,12 @@ def convert_to_hex_representations(map_data):
             first = char_array.index(first)
         else:
             first = hex(int(first))[2:]
-        
+
         second = hex(char_array.index(data[1].upper()))[2:]
         
         string += str(first) + str(second)
         
-    print('Number representation: ' + string)
+    print('Hex representation: ' + string)
 
     # with open('result.txt','a+') as f:
     #     f.write(string + '\n')
@@ -65,42 +65,6 @@ def convert_to_hex_representations(map_data):
     
     return string
 
-def convert_map_data(map_data):
-    string = ''
-    a_count = 0
-    byte_index = 0
-    for data in map_data:
-        if data == None or len(data) <= 0:
-            break
-
-        if byte_index == 0:
-            first = int(data)
-            if first > 0:
-                string += str(alpha_array[first + 15])
-
-            byte_index += 1
-        else:
-            second = int(data)
-
-            if second == 0:
-                a_count += 1
-            else:
-                if a_count > 0:
-                    string += str(a_count)
-
-                string += alpha_array[second]
-                a_count = 0
-
-            byte_index = 0
-        
-
-    print('Compressed: ' + string)
-
-    # with open('result.txt','a+') as f:
-    #     f.write(string + '\n')
-    #     f.close()
-    
-    return
 
 def rle(input_string):
     count = 1
@@ -150,6 +114,52 @@ def lzw(uncompressed):
         result.append(dictionary[w])
     return result
 
+def convert_map_data(map_data):
+    string = ''
+    byte_index = 0
+    for data in map_data:
+        if data == None or len(data) <= 0:
+            break
+
+        if byte_index == 0:
+            first = int(data)
+            if first > 0:
+                string += str(first)
+
+            byte_index += 1
+        else:
+            second = int(data,16)
+            string += alpha_array[second]
+
+            byte_index = 0
+        
+
+    print('Converted: ' + string)
+
+    # with open('result.txt','a+') as f:
+    #     f.write(string + '\n')
+    #     f.close()
+    
+    return string
+
+def compress_map_data(map_data):
+    prev_char = ''
+    string = ''
+    count = 0
+    for i in range(len(map_data)):
+        current_char = map_data[i]
+        if current_char == 'A':
+            count += 1
+        else:
+            if count > 0:
+                string += str(alpha_array[count+15])
+                count = 0
+            string += current_char
+
+    print('Compressed: ' + string)
+
+    return string
+
 for file_index in range(1,21):
     path = 'levels/level-' + sys.argv[1] + '/' + str('{:03d}'.format(file_index)) + '.txt'
     if not os.path.isfile(path):
@@ -157,6 +167,11 @@ for file_index in range(1,21):
         sys.exit()
         
     map_string = open_file(path)
+
+    # test
+    # map_string = '-^,->,--,--,1v,-v'
+    # end_test
+    
     if map_string == '':
         sys.exit()
 
@@ -166,19 +181,21 @@ for file_index in range(1,21):
     non_compressed_string = ''
     for data in map_data:
         non_compressed_string += data
-    
+
     print('\nMap ' + str(file_index) + ' string: ' + str(non_compressed_string))
 
     map_data = convert_to_hex_representations(map_data)
-    #convert_map_data(map_data)
+    map_data = convert_map_data(map_data)
+    map_data = compress_map_data(map_data)
 
-    compressed = lzw('07060e00080004010805000100010100000000010502030605')
-    print('\LZW ' + str(len(compressed)) + ': ' + str(compressed))
+    # compressed = lzw(map_data)
+    # print('\LZW ' + str(len(compressed)) + ': ' + str(compressed))
 
-    compressed = rle('07060e00080004010805000100010100000000010502030605')
-    if compressed[1] == 0:
-        print("RLE is {}".format(compressed[0]))
-
-    #print('\RLE ' + str(len(compressed)) + ': ' + str(compressed))
-
+    # compressed = rle(map_data)
+    # if compressed[1] == 0:
+    #     print("RLE is {}".format(compressed[0]))
     
+# -^->----1v-v
+# 050600001707
+#  F G A A1H H
+#  F G R  1H H
