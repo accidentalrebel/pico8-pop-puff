@@ -10,6 +10,9 @@ printh("Peeked: "..peek(0x1000))
 printh("Peeked: "..peek(0x1004))
 
 -- globals
+char_array = { "-", "0", "P", "F", "B", "^", ">", "V", "<", "S", "!", "]", ";", "[", "X" }
+alpha_array = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" }
+
 board_rows = 5
 board_cols = 5
 board_pad_x = 4.5
@@ -64,7 +67,8 @@ _left=4
 
 log("##################################")
 function _init()
-   compress_map_string("-F-----v----->---------0---0---------<-----^-----P")
+   local map_string = compress_map_string("-F-----v----->---------0---0---------<-----^-----P")
+   decompress_map_string(map_string)
    
    local a
    for row = 1,board_rows,1 do
@@ -773,9 +777,6 @@ end
 function compress_map_string(map_string)
    map_string = "-^,->,--,--,1V,-V"
    
-   local char_array = { "-", "0", "P", "F", "B", "^", ">", "V", "<", "S", "!", "]", ";", "[", "X" }
-   local alpha_array = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" }
-
    log(map_string)
    map_string = split_string(map_string, ",")
    
@@ -828,6 +829,34 @@ function compress_map_string(map_string)
       end
    end
    log("Compressed: "..new_string)
+   return new_string
+end
+
+function decompress_map_string(map_data)
+   local new_string = ""
+   local current_char = nil
+   local is_continue = false
+   local index = 0
+   for i=1, #map_data do
+      is_continue = false
+      current_char = sub(map_data,i,i)
+      if tonum(current_char) != nil then
+	 new_string = new_string..current_char
+	 is_continue = true
+      end
+
+      if not is_continue then
+	 index = get_table_index(alpha_array, current_char)
+	 if index >= 16 then
+	    for j=1, index-16 do
+	       new_string = new_string.."A"
+	    end
+	 else
+	    new_string = new_string..current_char
+	 end
+      end
+   end
+   log("Decompressed: "..new_string)
 end
 
 __gfx__
