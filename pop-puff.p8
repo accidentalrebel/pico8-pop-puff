@@ -70,7 +70,9 @@ log("##################################")
 function _init()
    setup_board()
 
-   local map_string = "DRHRGTBQBTIRFRC"
+   local map_string = "DRHRGTBQBTIRFRC2"
+   moves_left = sub(map_string, #map_string, #map_string)
+   map_string = sub(map_string, 1, #map_string - 1)
    map_string = decompress_map_string(map_string)
    setup_map(map_string)
 
@@ -95,7 +97,6 @@ function setup_map(map_string)
    
    for i=2,#map_string,2 do
       c = sub(map_string,i,i)
-      log(col..","..row)
       if c == "P" then
 	 make_player(_pop,col,row)
       elseif c == "F" then
