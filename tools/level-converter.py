@@ -6,6 +6,7 @@ alpha_array = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
 
 def open_file(level_string):
     map_string = ''
+    moves_count = 0
     with open(level_string,'r') as f:
         lines = []
         line = f.readline()
@@ -13,6 +14,9 @@ def open_file(level_string):
         while line:
             lines.append(line)
             line = f.readline()
+            if lines_count == 5:
+                moves_count = line[0]
+                
             lines_count += 1
 
         current_count = 0
@@ -25,7 +29,7 @@ def open_file(level_string):
 
         f.close()
 
-    return map_string
+    return map_string, moves_count
 
 def pad_map_data(map_data):
     i = 0
@@ -116,27 +120,26 @@ def lzw(uncompressed):
 
 def convert_map_data(map_data):
     string = ''
-    for data in map_data:
-        if data == None or len(data) <= 0:
-            break
+    bit_index = 0
+    for i in range(len(map_data)):
+        data = map_data[i]
 
-        if data[0].isdigit():
-            first = int(data[0])
+        if bit_index == 0:
+            if data.isdigit():
+                first = int(data)
+            else:
+                first = char_array.index(data.upper())
+
+            if first > 0:
+                string += str(first)
+
+            bit_index += 1
         else:
-            first = char_array.index(data[0].upper())
-
-        if first > 0:
-            string += str(first)
-
-        second = char_array.index(data[1].upper())
-        string += alpha_array[second]
+            second = char_array.index(data.upper())
+            string += alpha_array[second]
+            bit_index = 0
 
     print('Converted (' + str(len(string)) + '):\t\t' + string)
-
-    # with open('result.txt','a+') as f:
-    #     f.write(string + '\n')
-    #     f.close()
-    
     return string
 
 def compress_map_data(map_data):
@@ -210,7 +213,7 @@ for file_index in range(1,21):
         print('Cannot find path: ' + path + '. Exiting...')
         sys.exit()
         
-    map_string = open_file(path)
+    map_string, moves_count = open_file(path)
 
     # test
     # map_string = '-^,->,--,--,1v,-v'
@@ -228,12 +231,14 @@ for file_index in range(1,21):
     for data in map_data:
         non_compressed_string += data.upper()
 
+    non_compressed_string += str(moves_count)
+
     print('\nMap ' + str(file_index) + ' string:\t\t' + str(non_compressed_string))
 
     #map_data = convert_to_hex_representations(map_data)
     original_len = len(non_compressed_string)
     
-    map_data = convert_map_data(map_data)
+    map_data = convert_map_data(non_compressed_string)
     converted_len = len(map_data)
     
     map_data = compress_map_data(map_data)
