@@ -93,14 +93,7 @@ function _init()
    setup_board()
 
    local rolled = flr(rnd(#levels-1)) + 1
-   log("Rolled: "..rolled)
-   local map_string = levels[rolled]
-   log("Rolled for: ".. rolled.. " = " ..map_string)
-   moves_left = sub(map_string, #map_string, #map_string)
-   map_string = sub(map_string, 1, #map_string - 1)
-   map_string = decompress_map_string(map_string)
-   setup_map(map_string)
-
+   setup_map(rolled)
    setup_ui()
 end
 
@@ -114,7 +107,13 @@ function setup_board()
    end
 end
 
-function setup_map(map_string)
+function setup_map(level_num)
+
+   local map_string = levels[level_num]
+   moves_left = sub(map_string, #map_string, #map_string)
+   map_string = sub(map_string, 1, #map_string - 1)
+   map_string = decompress_map_string(map_string)
+   
    local c = nil
    local bit_index = 1
    local col = 1
