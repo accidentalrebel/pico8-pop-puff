@@ -68,6 +68,16 @@ _left=4
 log("##################################")
 -- SETUP ====
 function _init()
+   setup_board()
+
+   local map_string = "DRHRGTBQBTIRFRC"
+   map_string = decompress_map_string(map_string)
+   setup_map(map_string)
+
+   setup_ui()
+end
+
+function setup_board()
    local a
    for row = 1,board_rows,1 do
       for col = 1,board_cols,1 do
@@ -75,55 +85,6 @@ function _init()
 	 add(tiles,a)
       end
    end
-
-   local map_string = "-F-----V----->---------0---0---------<-----^-----P"
-   setup_map(map_string)
-   
-   map_string = compress_map_string(map_string)
-   decompress_map_string(map_string)
-
-   -- make_player(_pop,2,1)
-
-   -- make_cupcake(3,4)
-   -- make_cupcake(5,3)
-   -- make_cupcake(1,4)
-
-   -- make_arrow(_arrow_p,_down,3,1)
-   -- make_arrow(_arrow,_left,4,3)
-   -- make_arrow(_arrow,_down,4,5)
-   -- make_arrow(_arrow_p,_down,1,3)
-   -- make_arrow(_arrow_p,_left,5,5)
-   -- make_arrow(_arrow,_left,5,1)
-   -- make_arrow(_arrow_p,_up,4,5)
-   -- make_arrow(_arrow,_up,1,5)
-
-   -- a=make_switch(3,4,1,5)
-   -- add_switch_slave(a,1,5)
-   -- add_switch_slave(a,3,2)
-
-   -- make_box(1,2)
-   -- make_box(4,4)
-
-   -- a=make_actor(_hole,8,8,0,0,0,0,_spr_hole)
-   -- attach(a,get_tile_at(2,2))
-   -- add(tiles,a)
-   
-   tile_highlight = make_highlight(2,3,2,3,_spr_tile_highlight,3,3)
-   tile_highlight.visible = false
-
-   char_highlight = make_highlight(3,3,3,3,_spr_char_highlight)
-   char_highlight.x = 4
-   char_highlight.y = 4
-
-   a=make_actor("ui_cupcake",108,2,0,0,0,0,_spr_cupcake)
-   add(ui,a)
-   a=make_actor("ui_puff",4,4,0,0,0,0,_spr_puff)
-   add(ui,a)
-   a=make_actor("ui_pop",16,4,0,0,0,0,_spr_pop)
-   add(ui,a)
-
-   cupcake_counter_label = make_ui_label("x"..#cupcakes,118,4)
-   moves_left_label = make_ui_label(moves_left.." moves left",41,4)
 end
 
 function setup_map(map_string)
@@ -171,6 +132,25 @@ function setup_map(map_string)
 	 row = row + 1
       end
    end
+end
+
+function setup_ui()
+   tile_highlight = make_highlight(2,3,2,3,_spr_tile_highlight,3,3)
+   tile_highlight.visible = false
+
+   char_highlight = make_highlight(3,3,3,3,_spr_char_highlight)
+   char_highlight.x = 4
+   char_highlight.y = 4
+
+   a=make_actor("ui_cupcake",108,2,0,0,0,0,_spr_cupcake)
+   add(ui,a)
+   a=make_actor("ui_puff",4,4,0,0,0,0,_spr_puff)
+   add(ui,a)
+   a=make_actor("ui_pop",16,4,0,0,0,0,_spr_pop)
+   add(ui,a)
+
+   cupcake_counter_label = make_ui_label("x"..#cupcakes,118,4)
+   moves_left_label = make_ui_label(moves_left.." moves left",41,4)
 end
 
 function make_ui_label(text,x,y)
