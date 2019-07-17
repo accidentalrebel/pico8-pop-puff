@@ -804,7 +804,30 @@ function compress_map_string(map_string)
       end
    end
 
-   log("New string: "..new_string)
+   log("Converted string: "..new_string)
+
+   map_string = new_string
+
+   local current_char = nil
+   new_string = ""
+   count = 0
+   for i=1, #map_string+1 do
+      current_char = sub(map_string,i,i)
+      if current_char == "A" then
+	 count = count + 1
+	 if count + 15 >= 25 then
+	    new_string = new_string..alpha_array[count+16]
+	    count = 0
+	 end
+      else
+	 if count > 0 then
+	    new_string = new_string..alpha_array[count+16]
+	    count = 0
+	 end
+	 new_string = new_string..current_char
+      end
+   end
+   log("Compressed: "..new_string)
 end
 
 __gfx__
