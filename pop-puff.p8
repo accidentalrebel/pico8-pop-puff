@@ -857,6 +857,32 @@ function decompress_map_string(map_data)
       end
    end
    log("Decompressed: "..new_string)
+
+   map_data = new_string
+   new_string = ""
+   index = 0
+
+   local was_digit = false
+   for i=1, #map_data do
+      current_char = sub(map_data,i,i)
+      if tonum(current_char) != nil then
+	 new_string = new_string..current_char
+	 was_digit = true
+      else
+	 if not was_digit then
+	    new_string = new_string.."-"
+	 end
+
+	 index = get_table_index(alpha_array, current_char)
+	 current_char = char_array[index]
+
+	 new_string = new_string..current_char
+	 was_digit = false
+      end
+   end
+
+   log('Deverted: ' ..new_string)
+   return new_string
 end
 
 __gfx__
