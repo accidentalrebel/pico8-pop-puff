@@ -207,61 +207,71 @@ def devert_map_data(map_data):
     print('Deverted (' + str(len(string)) + '):\t\t' + string)
     return string
 
-for file_index in range(1,21):
-    path = 'levels/level-' + sys.argv[1] + '/' + str('{:03d}'.format(file_index)) + '.txt'
-    if not os.path.isfile(path):
-        print('Cannot find path: ' + path + '. Exiting...')
-        sys.exit()
+with open('result.txt','w') as f:
+
+    for file_index in range(1,21):
+        path = 'levels/level-' + sys.argv[1] + '/' + str('{:03d}'.format(file_index)) + '.txt'
+        if not os.path.isfile(path):
+            print('Cannot find path: ' + path + '. Exiting...')
+            sys.exit()
+
+        map_string, moves_count = open_file(path)
+
+        # test
+        # map_string = '-^,->,--,--,1v,-v'
+        # map_string = '--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,-v'
+        # map_string = '--,-v,--,--,--,--'
+        # end_test
+
+        if map_string == '':
+            sys.exit()
+
+        map_data = map_string.split(',')
+        map_data = pad_map_data(map_data)
+
+        non_compressed_string = ''
+        for data in map_data:
+            non_compressed_string += data.upper()
+
+        non_compressed_string += str(moves_count)
+
+        print('\nMap ' + str(file_index) + ' string:\t\t' + str(non_compressed_string))
+
+        #map_data = convert_to_hex_representations(map_data)
+        original_len = len(non_compressed_string)
+
+        map_data = convert_map_data(non_compressed_string)
+        converted_len = len(map_data)
+
+        map_data = compress_map_data(map_data)
+        final_map_data = map_data + str(moves_count)
+        compressed_len = len(map_data)
+
+        map_data = decompress_map_data(map_data)
+        map_data = devert_map_data(map_data)
+
+        if non_compressed_string != map_data:
+            raise Exception('Inconsistent conversion results!!!')
+
+        # print('============================================')
+        # print('Conversion savings:\t' + str((1 - (converted_len / original_len)) * 100) + '%')
+        # print('Compression savings:\t' + str((1 - (compressed_len / converted_len)) * 100) + '%')
+        # print('Total savings:\t\t' + str((1 - (compressed_len / original_len)) * 100) + '%')
+        # print('============================================')
+
+        print('\nFinal map data:\t' + final_map_data)
+
+        # compressed = lzw(map_data)
+        # print('\LZW ' + str(len(compressed)) + ': ' + str(compressed))
+
+        # compressed = rle(map_data)
+        # if compressed[1] == 0:
+        #     print('RLE is {}'.format(compressed[0]))
+
+        f.write(final_map_data + '\n')
         
-    map_string, moves_count = open_file(path)
+    f.close()
 
-    # test
-    # map_string = '-^,->,--,--,1v,-v'
-    # map_string = '--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,-v'
-    # map_string = '--,-v,--,--,--,--'
-    # end_test
-    
-    if map_string == '':
-        sys.exit()
-
-    map_data = map_string.split(',')
-    map_data = pad_map_data(map_data)
-
-    non_compressed_string = ''
-    for data in map_data:
-        non_compressed_string += data.upper()
-
-    non_compressed_string += str(moves_count)
-
-    print('\nMap ' + str(file_index) + ' string:\t\t' + str(non_compressed_string))
-
-    #map_data = convert_to_hex_representations(map_data)
-    original_len = len(non_compressed_string)
-    
-    map_data = convert_map_data(non_compressed_string)
-    converted_len = len(map_data)
-    
-    map_data = compress_map_data(map_data)
-    compressed_len = len(map_data)
-
-    map_data = decompress_map_data(map_data)
-    map_data = devert_map_data(map_data)
-
-    if non_compressed_string != map_data:
-        raise Exception('Inconsistent conversion results!!!')
-
-    print('============================================')
-    print('Conversion savings:\t' + str((1 - (converted_len / original_len)) * 100) + '%')
-    print('Compression savings:\t' + str((1 - (compressed_len / converted_len)) * 100) + '%')
-    print('Total savings:\t\t' + str((1 - (compressed_len / original_len)) * 100) + '%')
-    print('============================================')
-
-    # compressed = lzw(map_data)
-    # print('\LZW ' + str(len(compressed)) + ': ' + str(compressed))
-
-    # compressed = rle(map_data)
-    # if compressed[1] == 0:
-    #     print('RLE is {}'.format(compressed[0]))
     
 # -^->----1v-v
 # 050600001707
