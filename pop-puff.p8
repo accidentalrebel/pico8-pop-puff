@@ -67,7 +67,7 @@ _left=4
 
 log("##################################")
 function _init()
-   local map_string = "-F,--,--,-v,--,--,->,--,--,--,--,-0,--,-0,--,--,--,--,-<,--,--,-^,--,--,-P"
+   local map_string = "-F-----V----->---------0---0---------<-----^-----P"
    map_string = compress_map_string(map_string)
    decompress_map_string(map_string)
    
@@ -777,36 +777,38 @@ end
 -- levels
 function compress_map_string(map_string)
    log(map_string)
-   map_string = split_string(map_string, ",")
    
    local new_string = ""
-   local c = nil
-   for data in all(map_string) do
-      if data == nil or #data <= 0 then
-	 break
-      end
+   local bit_index = 1
+   for i=1, #map_string do
+      local data = sub(map_string,i,i)
 
-      first = sub(data,1,1)
-      first_int = tonum(first)
-      if first_int != nil then
-	 first = first_int
-      end
+      if bit_index == 1 then
+	 local first_int = tonum(data)
+	 if first_int != nil then
+	    data = first_int
+	 end
 
-      if first != '-' then
-	 new_string = new_string..first
-      end
+	 if data != '-' then
+	    new_string = new_string..data
+	 end
 
-      second = sub(data,2,2)
-      second = get_table_index(char_array,second)
+	 bit_index += 1
+      else
+	 data = get_table_index(char_array,data)
 
-      if second != nil then
-	 new_string = new_string..alpha_array[second]
+	 if data != nil then
+	    new_string = new_string..alpha_array[data]
+	 end
+
+	 bit_index = 1
       end
    end
 
-   log("Converted string: "..new_string)
+   log(new_string)
 
    map_string = new_string
+   local c = nil
 
    local current_char = nil
    new_string = ""
@@ -827,7 +829,7 @@ function compress_map_string(map_string)
 	 new_string = new_string..current_char
       end
    end
-   log("Compressed: "..new_string)
+   log(new_string)
    return new_string
 end
 
@@ -855,7 +857,7 @@ function decompress_map_string(map_data)
 	 end
       end
    end
-   log("Decompressed: "..new_string)
+   log(new_string)
 
    map_data = new_string
    new_string = ""
@@ -880,7 +882,7 @@ function decompress_map_string(map_data)
       end
    end
 
-   log('Deverted: ' ..new_string)
+   log(new_string)
    return new_string
 end
 
