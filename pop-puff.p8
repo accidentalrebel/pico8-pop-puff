@@ -67,7 +67,8 @@ _left=4
 
 log("##################################")
 function _init()
-   local map_string = compress_map_string("-F-----v----->---------0---0---------<-----^-----P")
+   local map_string = "-F,--,--,-v,--,--,->,--,--,--,--,-0,--,-0,--,--,--,--,-<,--,--,-^,--,--,-P"
+   map_string = compress_map_string(map_string)
    decompress_map_string(map_string)
    
    local a
@@ -775,8 +776,6 @@ end
 -->8
 -- levels
 function compress_map_string(map_string)
-   map_string = "-^,->,--,--,1V,-V"
-   
    log(map_string)
    map_string = split_string(map_string, ",")
    
