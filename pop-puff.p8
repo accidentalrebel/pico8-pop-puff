@@ -771,20 +771,40 @@ end
 -->8
 -- levels
 function compress_map_string(map_string)
+   map_string = "-^,->,--,--,1V,-V"
+   
    local char_array = { "-", "0", "P", "F", "B", "^", ">", "V", "<", "S", "!", "]", ";", "[", "X" }
    local alpha_array = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" }
+
+   log(map_string)
+   map_string = split_string(map_string, ",")
+   
    local new_string = ""
    local c = nil
-   for i=1,#map_string do
-      c = sub(map_string,i,i)
-      log("Conversion for "..c)
+   for data in all(map_string) do
+      if data == nil or #data <= 0 then
+	 break
+      end
 
-      for k,v in pairs(char_array) do
-	 if v == c then
-	    log("is "..k)
-	 end
+      first = sub(data,1,1)
+      first_int = tonum(first)
+      if first_int != nil then
+	 first = first_int
+      end
+
+      if first != '-' then
+	 new_string = new_string..first
+      end
+
+      second = sub(data,2,2)
+      second = get_table_index(char_array,second)
+
+      if second != nil then
+	 new_string = new_string..alpha_array[second]
       end
    end
+
+   log("New string: "..new_string)
 end
 
 __gfx__
