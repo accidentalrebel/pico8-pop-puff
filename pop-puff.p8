@@ -66,11 +66,8 @@ _down=3
 _left=4
 
 log("##################################")
+-- SETUP ====
 function _init()
-   local map_string = "-F-----V----->---------0---0---------<-----^-----P"
-   map_string = compress_map_string(map_string)
-   decompress_map_string(map_string)
-   
    local a
    for row = 1,board_rows,1 do
       for col = 1,board_cols,1 do
@@ -79,19 +76,24 @@ function _init()
       end
    end
 
-   make_player(_pop,2,1)
-   make_player(_puff,3,3)
+   local map_string = "-F-----V----->---------0---0---------<-----^-----P"
+   setup_map(map_string)
+   
+   map_string = compress_map_string(map_string)
+   decompress_map_string(map_string)
 
-   make_cupcake(3,4)
-   make_cupcake(5,3)
-   make_cupcake(1,4)
+   -- make_player(_pop,2,1)
 
-   make_arrow(_arrow_p,_down,3,1)
-   make_arrow(_arrow,_left,4,3)
-   make_arrow(_arrow,_down,4,5)
-   make_arrow(_arrow_p,_down,1,3)
-   make_arrow(_arrow_p,_left,5,5)
-   make_arrow(_arrow,_left,5,1)
+   -- make_cupcake(3,4)
+   -- make_cupcake(5,3)
+   -- make_cupcake(1,4)
+
+   -- make_arrow(_arrow_p,_down,3,1)
+   -- make_arrow(_arrow,_left,4,3)
+   -- make_arrow(_arrow,_down,4,5)
+   -- make_arrow(_arrow_p,_down,1,3)
+   -- make_arrow(_arrow_p,_left,5,5)
+   -- make_arrow(_arrow,_left,5,1)
    -- make_arrow(_arrow_p,_up,4,5)
    -- make_arrow(_arrow,_up,1,5)
 
@@ -115,13 +117,60 @@ function _init()
 
    a=make_actor("ui_cupcake",108,2,0,0,0,0,_spr_cupcake)
    add(ui,a)
-   a=make_actor("ui_pop",4,4,0,0,0,0,_spr_pop)
+   a=make_actor("ui_puff",4,4,0,0,0,0,_spr_puff)
    add(ui,a)
-   a=make_actor("ui_puff",16,4,0,0,0,0,_spr_puff)
+   a=make_actor("ui_pop",16,4,0,0,0,0,_spr_pop)
    add(ui,a)
 
    cupcake_counter_label = make_ui_label("x"..#cupcakes,118,4)
    moves_left_label = make_ui_label(moves_left.." moves left",41,4)
+end
+
+function setup_map(map_string)
+   local c = nil
+   local bit_index = 1
+   local col = 1
+   local row = 1
+   
+   for i=2,#map_string,2 do
+      c = sub(map_string,i,i)
+      log(col..","..row)
+      if c == "P" then
+	 make_player(_pop,col,row)
+      elseif c == "F" then
+	 make_player(_puff,col,row)
+      elseif c == "0" then
+	 make_cupcake(col,row)
+      elseif c == "B" then
+	 make_box(col,row)
+      elseif c == "X" then
+	 a=make_actor(_hole,8,8,0,0,0,0,_spr_hole)
+	 attach(a,get_tile_at(2,2))
+	 add(tiles,a)
+      elseif c == "^" then
+	 make_arrow(_arrow,_up,col,row)
+      elseif c == ">" then
+	 make_arrow(_arrow,_right,col,row)
+      elseif c == "V" then
+	 make_arrow(_arrow,_down,col,row)
+      elseif c == "<" then
+	 make_arrow(_arrow,_left,col,row)
+      elseif c == "!" then
+	 make_arrow(_arrow_p,_up,col,row)
+      elseif c == "]" then
+	 make_arrow(_arrow_p,_right,col,row)
+      elseif c == ";" then
+	 make_arrow(_arrow_p,_down,col,row)
+      elseif c == "[" then
+	 make_arrow(_arrow_p,_left,col,row)
+      end
+
+      col = col + 1
+      if col > board_cols then
+	 col = 1
+	 row = row + 1
+      end
+   end
 end
 
 function make_ui_label(text,x,y)
@@ -183,13 +232,16 @@ end
 
 function make_player(id,col,row)
    local sprite = nil
+   local player_index = 0
    if id == _pop then
       sprite = _spr_pop
+      player_index = 2
    else
       sprite = _spr_puff
+      player_index = 1
    end
    local a = make_actor(id,0,0,0,-1,col,row,sprite)
-   add(players,a)
+   players[player_index] = a
    attach(a,get_tile_at(col,row))
    
    a.pointing = nil
