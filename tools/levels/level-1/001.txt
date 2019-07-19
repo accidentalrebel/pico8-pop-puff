@@ -1,6 +1,6 @@
 F,-,-,v,-,
 -,>,-,-,-,
--,0,-,0,-,
+-,0,-,0,B,
 -,-,-,<,-,
 -,^,-,-,P,
 Hold and swipe a character to move,

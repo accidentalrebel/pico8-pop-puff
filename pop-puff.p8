@@ -13,8 +13,10 @@ printh("Peeked: "..peek(0x1004))
 char_array = { "-", "0", "P", "F", "B", "^", ">", "V", "<", "S", "!", "]", ";", "[", "X" }
 alpha_array = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" }
 
-levels = {"DRHRGTBQBTIRFRC2",
-	  "DRBHRBIUBQCBFTBI2",
+levels = {"DRHRGTBQBESIRFRC2",
+	  --"DRHRGTBQBTIRFRC2",
+	  "DRBHRBIQESBQCBFTBI2",
+	  --"DRBHRBIUBQCBFTBI2",
 	  "VDFHQBRBQHSCU2",
 	  "RBHRGRIQBSCSFQDBFQ2",
 	  "RHQCDRHSBBTFBBQFR2",
@@ -62,7 +64,7 @@ _y=2
 
 _pop="pop"
 _puff="puff"
-_cake="cake"
+_cupcake="cupcake"
 _arrow="arrow"
 _arrow_p="arrow_p"
 _box="box"
@@ -94,8 +96,6 @@ function _init()
 
    setup_map(current_level_index)
    setup_ui()
-
-   make_box(5,3)
 end
 
 function setup_board()
@@ -130,12 +130,7 @@ function setup_map(level_num)
 	 make_cupcake(col,row)
       elseif c == "B" then
 	 a = pool_fetch(_box)
-	 if a == nil then
-	    make_box(col,row)
-	 else
-	    a.col = col
-	    a.row = row
-	 end
+	 spawn_box(a,col,row)
       elseif c == "X" then
 	 a=make_actor(_hole,8,8,0,0,0,0,_spr_hole)
 	 attach(a,get_tile_at(2,2))
@@ -168,7 +163,9 @@ end
 
 function clear_map()
    for tile in all(tiles) do
-      pool(tile)
+      if tile.tag == _box then
+	 pool(tile)
+      end
    end
 end
 
@@ -269,8 +266,10 @@ function make_player(id,col,row)
    return a
 end
 
-function make_box(col,row)
-   local box = make_actor(_box,8,8,0,-1,0,0,_spr_box)
+function spawn_box(box,col,row)
+   if box == nil then
+      box = make_actor(_box,8,8,0,-1,0,0,_spr_box)
+   end
    attach(box,get_tile_at(col,row))
    add(tiles,box)
    return box
@@ -341,6 +340,11 @@ end
 function pool(obj)
    detach(obj)
    add(t_pool,obj)
+   if obj.tag == nil then
+      log("pooladded:"..tostr(obj))
+   else
+      log("pooladded: "..obj.tag)
+   end
    if obj.tag == _cupcake then
       del(cupcakes,obj)
    elseif obj.tag == _arrow then
@@ -353,9 +357,13 @@ end
 
 function pool_fetch(tag)
    for obj in all(t_pool) do
-      if obj.tag == tag then
-	 del(t_pool,obj)
-	 return obj
+      if obj.tag != nil then
+	 log("poolfetched: "..obj.tag.." check: "..tag)
+	 if obj.tag == tag then
+	    del(t_pool,obj)
+	    log("Fetched from pool")
+	    return obj
+	 end
       end
    end
    return nil
@@ -436,7 +444,6 @@ function on_reached_destination(obj)
 	    clear_map()
 	    current_level_index = current_level_index + 1
 	    setup_map(current_level_index)
-	    make_box(1,3)
 	 else
 	    switch_to_next_player()
 	 end
