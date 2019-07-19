@@ -141,14 +141,13 @@ function setup_map(level_num)
    for i=2,#map_string,2 do
       c = sub(map_string,i,i)
       if c == "F" then
-	 spawn_player(players[1],_puff,col,row)
+	 make_player(_puff,col,row)
       elseif c == "P" then
-	 spawn_player(players[2],_pop,col,row)
+	 make_player(_pop,col,row)
       elseif c == "0" then
 	 make_cupcake(col,row)
       elseif c == "B" then
-	 a = pool_fetch(_box)
-	 spawn_box(a,col,row)
+	 make_box(col,row)
       elseif c == "X" then
 	 a=make_actor(_hole,8,8,0,0,0,0,_spr_hole)
 	 attach(a,get_tile_at(2,2))
@@ -247,33 +246,43 @@ function make_arrow(arrow_type, pointing,col,row)
    if arrow_type == _arrow_p then
       spr_index = _spr_arrow_p
    end
+   spr_index = spr_index + pointing - 1
    
-   local a = make_actor(arrow_type,0,0,0,0,col,row,spr_index+pointing-1)
-   a.pointing=pointing
-   a.type = arrow_type
+   local arrow = pool_fetch(arrow_type)
+   if arrow == nil then
+      arrow = make_actor(arrow_type,0,0,0,0,col,row,spr_index)
+   end
+   arrow.spr = spr_index
+   arrow.pointing=pointing
+   arrow.type = arrow_type
    
-   attach(a,get_tile_at(col,row))
-   add(tiles,a)
-   return a
+   attach(arrow,get_tile_at(col,row))
+   add(tiles,arrow)
+   return arrow
 end
 
 function make_cupcake(col,row)
-   local cupcake = make_actor(_cupcake,8,8,0,-1,0,0,_spr_cupcake)
+   local cupcake = pool_fetch(_cupcake)
+   if cupcake == nil then
+      cupcake = make_actor(_cupcake,8,8,0,-1,0,0,_spr_cupcake)
+   end
    attach(cupcake,get_tile_at(col,row))
    add(cupcakes,cupcake)   
 end
 
-function spawn_player(player,id,col,row)
+function make_player(id,col,row)
+   local player = nil
+   local sprite = nil
+   local player_index = 0
+   if id == _pop then
+      sprite = _spr_pop
+      player_index = 2
+   else
+      sprite = _spr_puff
+      player_index = 1
+   end
+   player = players[player_index]
    if player == nil then
-      local sprite = nil
-      local player_index = 0
-      if id == _pop then
-	 sprite = _spr_pop
-	 player_index = 2
-      else
-	 sprite = _spr_puff
-	 player_index = 1
-      end
       player = make_actor(id,0,0,0,-1,col,row,sprite)
       players[player_index] = player
    end
@@ -288,7 +297,8 @@ function spawn_player(player,id,col,row)
    return player
 end
 
-function spawn_box(box,col,row)
+function make_box(col,row)
+   local box = pool_fetch(_box)
    if box == nil then
       box = make_actor(_box,8,8,0,-1,0,0,_spr_box)
    end
@@ -382,10 +392,9 @@ end
 function pool_fetch(tag)
    for obj in all(t_pool) do
       if obj.tag != nil then
-	 log("poolfetched: "..obj.tag.." check: "..tag)
 	 if obj.tag == tag then
 	    del(t_pool,obj)
-	    log("Fetched from pool")
+	    log("Pool fetched: "..obj.tag)
 	    return obj
 	 end
       end
