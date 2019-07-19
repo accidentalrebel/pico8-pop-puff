@@ -52,6 +52,7 @@ moves_left_label = nil
 is_highlight_mode = false
 has_switched_player = false
 tiles = {}
+board_tiles = {}
 cupcakes = {}
 players = {}
 tweens = {}
@@ -62,6 +63,7 @@ ui = {}
 _x=1
 _y=2
 
+_all_types="all_types"
 _pop="pop"
 _puff="puff"
 _cupcake="cupcake"
@@ -103,9 +105,25 @@ function setup_board()
    for row = 1,board_rows,1 do
       for col = 1,board_cols,1 do
 	 a = make_actor("tile",(col+board_pad_x)*8,(row+board_pad_y)*8,0,0,col,row,18)	
-	 add(tiles,a)
+	 add(board_tiles,a)
       end
    end
+end
+
+function debug_tiles()
+   local debug_string = "Debug Tiles: "
+   
+   for board_tile in all(board_tiles) do
+      if #board_tile.children > 0 then
+	 debug_string = debug_string.."("..board_tile.col..","..board_tile.row..")"
+	 
+	 for child in all(board_tile.children) do
+	    debug_string = debug_string..child.tag
+	 end
+	 debug_string = debug_string.." - "
+      end
+   end
+   log(debug_string)
 end
 
 function setup_map(level_num)
@@ -334,7 +352,7 @@ function get_tile_at(col,row)
       return nil
    end
    local index = ((row-1)*(board_cols))+col
-   return tiles[index]
+   return board_tiles[index]
 end
 
 function pool(obj)
@@ -347,11 +365,13 @@ function pool(obj)
    end
    if obj.tag == _cupcake then
       del(cupcakes,obj)
-   elseif obj.tag == _arrow then
-      del(tiles,obj)
    elseif obj.tag == _pop
    or obj.tag == _puff then
       del(players,obj)
+   elseif obj.tag == _arrow or obj.tag == _box then
+      del(tiles,obj)
+   else
+      del(tiles,obj)
    end
 end
 
@@ -447,6 +467,7 @@ function on_reached_destination(obj)
 	 else
 	    switch_to_next_player()
 	 end
+	 debug_tiles()
       end
    end
 end
@@ -784,6 +805,7 @@ function _draw()
    cls()
    rectfill(-4,0,127,127,12)   
    map(0,0,4,0,16,16)
+   foreach(board_tiles,draw_actor)
    foreach(tiles,draw_actor)
    foreach(cupcakes,draw_actor)
    foreach(players,draw_actor)
