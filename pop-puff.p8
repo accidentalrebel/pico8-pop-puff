@@ -140,10 +140,10 @@ function setup_map(level_num)
    
    for i=2,#map_string,2 do
       c = sub(map_string,i,i)
-      if c == "P" then
-	 make_player(_pop,col,row)
-      elseif c == "F" then
-	 make_player(_puff,col,row)
+      if c == "F" then
+	 spawn_player(players[1],_puff,col,row)
+      elseif c == "P" then
+	 spawn_player(players[2],_pop,col,row)
       elseif c == "0" then
 	 make_cupcake(col,row)
       elseif c == "B" then
@@ -263,25 +263,29 @@ function make_cupcake(col,row)
    add(cupcakes,cupcake)   
 end
 
-function make_player(id,col,row)
-   local sprite = nil
-   local player_index = 0
-   if id == _pop then
-      sprite = _spr_pop
-      player_index = 2
-   else
-      sprite = _spr_puff
-      player_index = 1
+function spawn_player(player,id,col,row)
+   if player == nil then
+      local sprite = nil
+      local player_index = 0
+      if id == _pop then
+	 sprite = _spr_pop
+	 player_index = 2
+      else
+	 sprite = _spr_puff
+	 player_index = 1
+      end
+      player = make_actor(id,0,0,0,-1,col,row,sprite)
+      players[player_index] = player
    end
-   local a = make_actor(id,0,0,0,-1,col,row,sprite)
-   players[player_index] = a
-   attach(a,get_tile_at(col,row))
+
+   attach(player,get_tile_at(col,row))
+
+   player.anim_index = 0
+   player.pointing = nil
+   player.stop_on_next_tile = false
+   player.is_traveling = false
    
-   a.pointing = nil
-   a.stop_on_next_tile = false
-   a.is_traveling = false
-   
-   return a
+   return player
 end
 
 function spawn_box(box,col,row)
@@ -461,9 +465,7 @@ function on_reached_destination(obj)
    if obj.tag == _pop or obj.tag == _puff then
       if obj.tag == players[current_player_index].tag then
 	 if #cupcakes <= 0 then
-	    clear_map()
-	    current_level_index = current_level_index + 1
-	    setup_map(current_level_index)
+	    on_level_cleared()
 	 else
 	    switch_to_next_player()
 	 end
@@ -480,6 +482,13 @@ function continue_sliding(slider)
    else
       on_reached_destination(slider)
    end
+end
+
+function on_level_cleared()
+   clear_map()
+   current_level_index = current_level_index + 1
+   setup_map(current_level_index)
+   current_player_index = 1
 end
 
 function on_tween_reached(tween)
