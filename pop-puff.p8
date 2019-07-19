@@ -14,34 +14,34 @@ char_array = { "-", "0", "P", "F", "B", "^", ">", "V", "<", "S", "!", "]", ";", 
 alpha_array = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" }
 
 levels = {"DRHRGTBQBTIRFRC2",
-	  "DRHRGTBQBTIRFRC22",
-	  "DRBHRBIUBQCBFTBI22",
-	  "VDFHQBRBQHSCU22",
-	  "RBHRGRIQBSCSFQDBFQ22",
-	  "RHQCDRHSBBTFBBQFR22",
-	  "QHFSHFRBHFQIQHFSBDQC22",
-	  "QGQIRBQBTFCDFTBQBQ22",
-	  "RGQBUGQCQFBQBRDT22",
-	  "BHBITFDQBQCWGBIQ22",
-	  "DQHQHRBRGBCBFRBRFQGQB11",
-	  "QFBBBQBSBQCQITBFFDQF22",
-	  "QBHIQBGBFWDVCQ22",
-	  "HIIIIHHICFHHBIFBGGFFDGGGF11",
-	  "BGHGHDFBFRFBFRFBFCGFGFB22",
-	  "QBYGDBITCQFBBI11",
-	  "GQBQICRHBGDQBBHSBGGGGF11",
-	  "GBGBSBRGBBBSBRDBCBF33",
-	  "UGBHBIRDRGBQBIRCR22",
-	  "DSGRCRHQHQHBQBQHFBGBI11",
-	  "QBRBGQHBIFCBQFDQGBFU22" }
+	  "DRBHRBIUBQCBFTBI2",
+	  "VDFHQBRBQHSCU2",
+	  "RBHRGRIQBSCSFQDBFQ2",
+	  "RHQCDRHSBBTFBBQFR2",
+	  "QHFSHFRBHFQIQHFSBDQC2",
+	  "QGQIRBQBTFCDFTBQBQ2",
+	  "RGQBUGQCQFBQBRDT2",
+	  "BHBITFDQBQCWGBIQ2",
+	  "DQHQHRBRGBCBFRBRFQGQB1",
+	  "QFBBBQBSBQCQITBFFDQF2",
+	  "QBHIQBGBFWDVCQ2",
+	  "HIIIIHHICFHHBIFBGGFFDGGGF1",
+	  "BGHGHDFBFRFBFRFBFCGFGFB2",
+	  "QBYGDBITCQFBBI1",
+	  "GQBQICRHBGDQBBHSBGGGGF1",
+	  "GBGBSBRGBBBSBRDBCBF3",
+	  "UGBHBIRDRGBQBIRCR2",
+	  "DSGRCRHQHQHBQBQHFBGBI1",
+	  "QBRBGQHBIFCBQFDQGBFU2" }
 
 board_rows = 5
 board_cols = 5
 board_pad_x = 4.5
 board_pad_y = 5
 slide_speed = 0.2
-current_player_index = 1
 moves_left = 3
+current_player_index = 1
+current_level_index = 1
 
 tile_highlight = nil
 char_highlight = nil
@@ -53,7 +53,7 @@ tiles = {}
 cupcakes = {}
 players = {}
 tweens = {}
-pool = {}
+t_pool = {}
 ui = {}
 
 -- enums
@@ -92,9 +92,10 @@ log("##################################")
 function _init()
    setup_board()
 
-   local rolled = flr(rnd(#levels-1)) + 1
-   setup_map(rolled)
+   setup_map(current_level_index)
    setup_ui()
+
+   make_box(5,3)
 end
 
 function setup_board()
@@ -108,12 +109,12 @@ function setup_board()
 end
 
 function setup_map(level_num)
-
    local map_string = levels[level_num]
    moves_left = sub(map_string, #map_string, #map_string)
    map_string = sub(map_string, 1, #map_string - 1)
    map_string = decompress_map_string(map_string)
-   
+
+   local a = nil
    local c = nil
    local bit_index = 1
    local col = 1
@@ -128,7 +129,13 @@ function setup_map(level_num)
       elseif c == "0" then
 	 make_cupcake(col,row)
       elseif c == "B" then
-	 make_box(col,row)
+	 a = pool_fetch(_box)
+	 if a == nil then
+	    make_box(col,row)
+	 else
+	    a.col = col
+	    a.row = row
+	 end
       elseif c == "X" then
 	 a=make_actor(_hole,8,8,0,0,0,0,_spr_hole)
 	 attach(a,get_tile_at(2,2))
@@ -156,6 +163,12 @@ function setup_map(level_num)
 	 col = 1
 	 row = row + 1
       end
+   end
+end
+
+function clear_map()
+   for tile in all(tiles) do
+      pool(tile)
    end
 end
 
@@ -327,7 +340,7 @@ end
 
 function pool(obj)
    detach(obj)
-   add(tpool,obj)
+   add(t_pool,obj)
    if obj.tag == _cupcake then
       del(cupcakes,obj)
    elseif obj.tag == _arrow then
@@ -336,6 +349,16 @@ function pool(obj)
    or obj.tag == _puff then
       del(players,obj)
    end
+end
+
+function pool_fetch(tag)
+   for obj in all(t_pool) do
+      if obj.tag == tag then
+	 del(t_pool,obj)
+	 return obj
+      end
+   end
+   return nil
 end
 
 function on_hole_stepped(hole,stepper)
@@ -406,9 +429,17 @@ end
 
 function on_reached_destination(obj)
    obj.is_traveling = false
+
    if obj.tag == _pop or obj.tag == _puff then
       if obj.tag == players[current_player_index].tag then
-	 switch_to_next_player()
+	 if #cupcakes <= 0 then
+	    clear_map()
+	    current_level_index = current_level_index + 1
+	    setup_map(current_level_index)
+	    make_box(1,3)
+	 else
+	    switch_to_next_player()
+	 end
       end
    end
 end
